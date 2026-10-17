@@ -23,6 +23,8 @@
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         .prose pre { background-color: #f1f5f9; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
         .dark .prose pre { background-color: #1e293b; }
+        .chat-title-pulse { animation: titlePulse 0.5s ease-out; }
+        @keyframes titlePulse { 0% { background-color: rgba(14, 165, 233, 0.2); } 100% { background-color: transparent; } }
     </style>
     <script>
         tailwind.config = {
@@ -64,32 +66,21 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full relative">
         <header class="h-16 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md flex items-center justify-between px-4 sticky top-0 z-30">
-            <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 hover:text-ithelice-600"><i class="fa-solid fa-bars text-xl"></i></button>
-                <div>
-                    <h1 class="font-semibold text-gray-800 dark:text-gray-100">ITHÉLICE</h1>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute</p>
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 hover:text-ithelice-600 flex-shrink-0"><i class="fa-solid fa-bars text-xl"></i></button>
+                <div class="min-w-0 flex-1">
+                    <h1 class="font-semibold text-gray-800 dark:text-gray-100 truncate" id="headerTitle">ITHÉLICE</h1>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block truncate" id="headerSubtitle">Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-shrink-0">
                 <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> <span id="modeIndicator">IA Connectée (Pollinations)</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> IA Connectée
                 </span>
             </div>
         </header>
 
-        <div id="chatContainer" class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 space-y-6 scroll-smooth">
-            <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-4" id="emptyState">
-                <div class="w-16 h-16 rounded-2xl bg-ithelice-100 dark:bg-ithelice-900/30 flex items-center justify-center">
-                    <i class="fa-solid fa-brain text-ithelice-600 text-2xl"></i>
-                </div>
-                <div class="max-w-md">
-                    <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-1">Bienvenue dans ITHÉLICE v1.1</h3>
-                    <p class="text-sm">Connectée à une vraie IA (gratuite, illimitée, sans clé). Posez n'importe quelle question : phobies, anxiété, traitements, biologie... L'IA appliquera les principes TMD, ARI et IOB à votre situation.</p>
-                    <p class="text-xs mt-3 text-red-500 dark:text-red-400 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Ne remplace pas un avis médical ou psychiatrique.</p>
-                </div>
-            </div>
-        </div>
+        <div id="chatContainer" class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 space-y-6 scroll-smooth"></div>
 
         <div class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
             <div class="max-w-3xl mx-auto relative">
@@ -120,14 +111,7 @@
                         <option value="llama">Llama</option>
                         <option value="qwen-coder">Qwen Coder</option>
                     </select>
-                    <p class="text-xs text-gray-500 mt-1">Via Pollinations.ai — gratuit, illimité, sans clé API, fonctionne directement depuis GitHub Pages.</p>
-                </div>
-                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
-                    <p class="text-xs text-blue-800 dark:text-blue-300">
-                        <i class="fa-solid fa-circle-info mr-1"></i>
-                        <strong>Pourquoi Pollinations.ai ?</strong><br>
-                        Les autres APIs (Hugging Face, OpenRouter) bloquent les requêtes directes depuis un navigateur (CORS). Pollinations.ai est la seule API gratuite qui fonctionne depuis GitHub Pages sans serveur intermédiaire.
-                    </p>
+                    <p class="text-xs text-gray-500 mt-1">Via Pollinations.ai — gratuit, illimité, sans clé API.</p>
                 </div>
             </div>
             <div class="mt-6 flex justify-end gap-3">
@@ -152,13 +136,8 @@
             renderSidebar();
             renderChat();
             applyDarkMode();
-            updateModeIndicator();
             document.getElementById('aiModel').value = settings.model;
         });
-
-        function updateModeIndicator() {
-            document.getElementById('modeIndicator').textContent = 'IA Connectée (Pollinations)';
-        }
 
         // --- SIDEBAR & NAVIGATION ---
         function toggleSidebar() {
@@ -175,20 +154,34 @@
         }
 
         function createNewChat() {
-            const newChat = { id: Date.now().toString(), title: 'Nouvelle conversation', messages: [], createdAt: new Date().toISOString() };
+            const newChat = { 
+                id: Date.now().toString(), 
+                title: 'Nouvelle conversation', 
+                messages: [], 
+                createdAt: new Date().toISOString() 
+            };
             chats.unshift(newChat);
             currentChatId = newChat.id;
             saveData();
             renderSidebar();
             renderChat();
+            updateHeader();
+            
+            // Focus automatique sur l'input pour indiquer visuellement le changement
+            setTimeout(() => {
+                document.getElementById('messageInput').focus();
+            }, 100);
+            
             if (window.innerWidth < 768) toggleSidebar();
         }
 
         function switchChat(id) {
+            if (currentChatId === id) return; // Déjà sur cette conversation
             currentChatId = id;
             saveData();
             renderSidebar();
             renderChat();
+            updateHeader();
             if (window.innerWidth < 768) toggleSidebar();
         }
 
@@ -199,10 +192,13 @@
             if (currentChatId === id) {
                 currentChatId = chats.length > 0 ? chats[0].id : null;
                 if (!currentChatId) createNewChat();
+                else {
+                    renderChat();
+                    updateHeader();
+                }
             }
             saveData();
             renderSidebar();
-            renderChat();
         }
 
         function renderSidebar() {
@@ -210,14 +206,37 @@
             list.innerHTML = chats.map(chat => `
                 <div onclick="switchChat('${chat.id}')" class="group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors mb-1 ${currentChatId === chat.id ? 'bg-ithelice-50 dark:bg-ithelice-900/20 border border-ithelice-200 dark:border-ithelice-800' : 'hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent'}">
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium truncate text-gray-800 dark:text-gray-200">${chat.title}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${new Date(chat.createdAt).toLocaleDateString()}</p>
+                        <p class="text-sm font-medium truncate text-gray-800 dark:text-gray-200">${escapeHtml(chat.title)}</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${new Date(chat.createdAt).toLocaleDateString()} ${chat.messages.length === 0 ? '• <span class="text-ithelice-600 dark:text-ithelice-400">Vide</span>' : `• ${chat.messages.length} msg`}</p>
                     </div>
-                    <button onclick="deleteChat('${chat.id}', event)" class="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all">
+                    <button onclick="deleteChat('${chat.id}', event)" class="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all ml-2 flex-shrink-0">
                         <i class="fa-solid fa-trash-can text-xs"></i>
                     </button>
                 </div>
             `).join('');
+        }
+
+        // --- HEADER UPDATE (pour voir sur quelle conversation on est) ---
+        function updateHeader() {
+            const chat = chats.find(c => c.id === currentChatId);
+            const headerTitle = document.getElementById('headerTitle');
+            const headerSubtitle = document.getElementById('headerSubtitle');
+            
+            if (!chat) {
+                headerTitle.textContent = 'ITHÉLICE';
+                headerSubtitle.textContent = 'Intelligence Thérapeutique de l\'Hélice Cérébrale et de la Menace Dissoute';
+                return;
+            }
+            
+            headerTitle.textContent = chat.title;
+            headerTitle.classList.add('chat-title-pulse');
+            setTimeout(() => headerTitle.classList.remove('chat-title-pulse'), 500);
+            
+            if (chat.messages.length === 0) {
+                headerSubtitle.innerHTML = '<span class="text-ithelice-600 dark:text-ithelice-400 font-medium">Nouvelle conversation — prête à démarrer</span>';
+            } else {
+                headerSubtitle.textContent = `${chat.messages.length} message${chat.messages.length > 1 ? 's' : ''} • Dernière activité : ${new Date(chat.createdAt).toLocaleString()}`;
+            }
         }
 
         // --- CHAT RENDERING ---
@@ -226,7 +245,25 @@
             const chat = chats.find(c => c.id === currentChatId);
             
             if (!chat || chat.messages.length === 0) {
-                container.innerHTML = document.getElementById('emptyState').outerHTML;
+                // Empty state généré dynamiquement (plus de bug d'IDs dupliqués)
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-4">
+                        <div class="w-16 h-16 rounded-2xl bg-ithelice-100 dark:bg-ithelice-900/30 flex items-center justify-center">
+                            <i class="fa-solid fa-brain text-ithelice-600 text-2xl"></i>
+                        </div>
+                        <div class="max-w-md">
+                            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-1">
+                                ${chat && chat.title === 'Nouvelle conversation' ? 'Nouvelle conversation prête' : 'Bienvenue dans ITHÉLICE v1.1'}
+                            </h3>
+                            <p class="text-sm">
+                                ${chat && chat.title === 'Nouvelle conversation' 
+                                    ? 'Commencez à écrire ci-dessous pour démarrer la conversation avec ITHÉLICE.' 
+                                    : 'Connectée à une vraie IA (gratuite, illimitée, sans clé). Posez n\'importe quelle question : phobies, anxiété, traitements, biologie... L\'IA appliquera les principes TMD, ARI et IOB à votre situation.'}
+                            </p>
+                            <p class="text-xs mt-3 text-red-500 dark:text-red-400 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Ne remplace pas un avis médical ou psychiatrique.</p>
+                        </div>
+                    </div>`;
+                updateHeader();
                 return;
             }
 
@@ -273,6 +310,7 @@
                 }
             }).join('');
             scrollToBottom();
+            updateHeader();
         }
 
         // --- MESSAGE ACTIONS ---
@@ -331,19 +369,25 @@
             if (!content) return;
 
             const chat = chats.find(c => c.id === currentChatId);
-            if (chat.messages.length === 0) chat.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
+            if (!chat) return;
+            
+            if (chat.messages.length === 0) {
+                chat.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
+                renderSidebar(); // Mettre à jour la sidebar immédiatement avec le nouveau titre
+            }
             
             chat.messages.push({ role: 'user', content: content });
             input.value = '';
             input.style.height = 'auto';
             saveData();
-            renderSidebar();
             renderChat();
             generateAIResponse();
         }
 
         async function generateAIResponse() {
             const chat = chats.find(c => c.id === currentChatId);
+            if (!chat) return;
+            
             const container = document.getElementById('chatContainer');
             const typingId = 'typing-' + Date.now();
             
@@ -372,13 +416,15 @@
                 responseTime = '0.00';
             }
 
-            document.getElementById(typingId).remove();
+            const typingEl = document.getElementById(typingId);
+            if (typingEl) typingEl.remove();
+            
             chat.messages.push({ role: 'assistant', content: responseText, responseTime: responseTime });
             saveData();
             renderChat();
         }
 
-        // --- POLLINATIONS.AI API (fonctionne depuis GitHub Pages, sans clé) ---
+        // --- POLLINATIONS.AI API ---
         async function fetchPollinationsResponse(messages) {
             const systemPrompt = `Tu es ITHÉLICE v1.1 (Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute).
 
@@ -424,9 +470,7 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
 - Réponds de manière CONTEXTUELLE et SPÉCIFIQUE à la question posée (pas de réponse générique)
 - Applique les principes ITHÉLICE de façon adaptée au sujet précis
 - Sois structuré mais naturel
-- Utilise le formatage markdown (titres, listes, gras) pour la clarté
-- Si on te demande un exemple d'efficacité, donne un exemple concret et détaillé
-- Si on te parle d'une phobie (arachnophobie, claustrophobie, agoraphobie, etc.), analyse SPÉCIFIQUEMENT cette phobie avec TMD, Hélice et IOB`;
+- Utilise le formatage markdown (titres, listes, gras) pour la clarté`;
 
             const formattedMessages = [
                 { role: 'system', content: systemPrompt },
@@ -477,7 +521,6 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
             settings.model = document.getElementById('aiModel').value;
             localStorage.setItem('ithelice_settings', JSON.stringify(settings));
             toggleSettings();
-            updateModeIndicator();
             alert('Paramètres sauvegardés.');
         }
 
