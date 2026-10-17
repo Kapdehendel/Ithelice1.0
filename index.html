@@ -2,66 +2,462 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1020">
-<title>ITHÉLICE — Assistant IA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ITHÉLICE v1.1 — Intelligence Thérapeutique</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#111a2d;--panel2:#1a2742;--line:#2b3956;--txt:#eef2ff;--muted:#9eacc8;--accent:#aebaff;--user:#263658}
-*{box-sizing:border-box}body{margin:0;height:100dvh;overflow:hidden;background:var(--bg);color:var(--txt);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,textarea{font:inherit}button{cursor:pointer;color:inherit;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 11px}button:hover{border-color:var(--accent)}button:disabled{opacity:.45;cursor:not-allowed}.app{height:100dvh;display:flex}.sidebar{width:280px;flex:0 0 280px;background:#0e1628;border-right:1px solid var(--line);display:flex;flex-direction:column;transition:width .2s,flex-basis .2s;overflow:hidden}.sidebar.closed{width:0;flex-basis:0;border:0}.sidehead{padding:16px;display:flex;align-items:center;justify-content:space-between;gap:8px}.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.08em}.logo{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#c2caff,#7182dc);color:#10182c;font-size:19px}.new{margin:0 12px 12px;text-align:left}.label{font-size:11px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:8px 15px}.history{overflow:auto;flex:1;padding:0 8px}.histrow{display:flex;gap:4px;margin:3px 0}.histopen{flex:1;min-width:0;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:transparent;border-color:transparent}.histopen.active{background:var(--panel2)}.delete{background:transparent;border-color:transparent;color:var(--muted)}.sidefoot{padding:12px;border-top:1px solid var(--line);display:grid;gap:8px}.muted{color:var(--muted);font-size:12px}.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:62px;flex:0 0 62px;display:flex;align-items:center;gap:12px;padding:0 15px;border-bottom:1px solid var(--line)}.top strong{font-size:14px}.grow{flex:1}.content{flex:1;overflow:auto;scroll-behavior:smooth}.welcome{max-width:720px;margin:9vh auto 25px;padding:0 20px;text-align:center}.biglogo{width:65px;height:65px;margin:0 auto 18px;display:grid;place-items:center;border-radius:22px;background:linear-gradient(135deg,#c2caff,#7182dc);color:#10182c;font-size:30px;font-weight:900}.welcome h1{font-size:clamp(27px,4vw,38px);line-height:1.15;margin:0 0 12px}.welcome p{color:var(--muted)}.chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:20px}.chips button{font-size:12px}.messages{max-width:850px;margin:auto;padding:26px 18px}.msg{display:flex;gap:11px;margin:0 0 25px;align-items:flex-start}.avatar{width:32px;height:32px;flex:0 0 32px;border-radius:10px;display:grid;place-items:center;background:#283958;font-size:11px;font-weight:800}.assistant .avatar{background:#cbd2ff;color:#10182c}.body{flex:1;min-width:0}.head{display:flex;gap:10px;align-items:center;margin:2px 0 7px;font-size:13px}.time{color:var(--muted);font-size:11px;font-variant-numeric:tabular-nums}.bubble{white-space:pre-wrap;overflow-wrap:anywhere}.user .bubble{padding:12px 14px;background:var(--user);border:1px solid #3a4b70;border-radius:14px}.assistant .bubble{padding:2px 0}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.actions button{font-size:12px;padding:5px 8px;background:transparent;color:var(--muted)}.edit{width:100%;min-height:90px;resize:vertical;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:10px;padding:10px}.composewrap{padding:10px 16px 13px;background:linear-gradient(0deg,var(--bg) 80%,transparent)}.compose{max-width:850px;margin:auto;padding:10px;border:1px solid #354565;border-radius:17px;background:var(--panel)}textarea#prompt{display:block;width:100%;min-height:60px;max-height:180px;resize:vertical;background:transparent;color:var(--txt);border:0;outline:0;padding:7px}.composefoot{display:flex;align-items:center;gap:8px}.composefoot .muted{flex:1}.send{background:var(--accent);color:#11182d;border-color:transparent;font-weight:800;padding:9px 16px}.disclaimer{max-width:850px;text-align:center;margin:8px auto 0;color:#7f8ba6;font-size:10px;padding:0 8px}.status{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px}.dot{width:7px;height:7px;border-radius:50%;background:#e6bd6a}.modalback{display:none;position:fixed;inset:0;background:#0009;z-index:9;align-items:center;justify-content:center;padding:16px}.modalback.open{display:flex}.modal{width:min(560px,100%);max-height:90dvh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}.modal h2{margin:0}.modal p{color:var(--muted);font-size:13px}.modalactions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px}.bar{height:6px;background:#263450;border-radius:9px;overflow:hidden;margin:12px 0}.bar span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}.warning{padding:10px;border:1px solid #69583a;background:#332b1d;color:#f4deb1;border-radius:10px;font-size:12px}.hidden{display:none!important}
-@media(max-width:700px){.sidebar{position:fixed;z-index:5;inset:0 auto 0 0;width:min(290px,86vw);box-shadow:0 10px 35px #0007}.sidebar.closed{width:0}.top{padding:0 9px}.composewrap{padding:8px}.messages{padding:20px 12px}.welcome{margin-top:7vh}.composefoot .muted{display:none}.msg{gap:8px}}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+body { font-family: 'Inter', sans-serif; }
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #475569; }
+.sidebar-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.message-bubble { animation: fadeIn 0.3s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.typing-dot { animation: typing 1.4s infinite ease-in-out both; }
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+.prose pre { background-color: #f1f5f9; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+.dark .prose pre { background-color: #1e293b; }
+.chat-title-pulse { animation: titlePulse 0.5s ease-out; }
+@keyframes titlePulse { 0% { background-color: rgba(14, 165, 233, 0.2); } 100% { background-color: transparent; } }
 </style>
+<script>
+tailwind.config = {
+darkMode: 'class',
+theme: { extend: { colors: { ithelice: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' } } } }
+}
+</script>
 </head>
-<body>
-<div class="app">
-<aside class="sidebar" id="sidebar">
- <div class="sidehead"><div class="brand"><div class="logo">I</div><div>ITHÉLICE<br><span class="muted">Assistant local</span></div></div><button id="closeSide" aria-label="Fermer">‹</button></div>
- <button class="new" id="newChat">＋ Nouvelle conversation</button><div class="label">Historique</div><div class="history" id="history"></div>
- <div class="sidefoot"><div class="status"><span class="dot" id="dot"></span><span id="status">IA pas encore chargée</span></div><button id="loadAI">Démarrer / charger l’IA</button><button id="clear">Effacer tout l’historique</button></div>
-</aside>
-<main class="main">
- <header class="top"><button id="openSide" aria-label="Ouvrir la barre latérale">☰</button><div><strong id="title">Nouvelle conversation</strong><div class="muted">ITHÉLICE v1.1 · TMD · ARI · IOB</div></div><div class="grow"></div><button id="webBtn" title="Recherche Internet">🌐 Web : Wikipédia</button></header>
- <section class="content" id="content">
-  <div class="welcome" id="welcome"><div class="biglogo">I</div><h1>Parlons librement.</h1><p>Un assistant expérimental qui aide à clarifier les difficultés, séparer faits et hypothèses et rechercher des moyens proportionnés de réduire la souffrance évitable.</p><p class="muted">Les réponses sont générées par un service IA en ligne public. Une connexion Internet est nécessaire.</p><div class="chips"><button data-prompt="J’éprouve une souffrance et j’aimerais la comprendre sans être jugé.">Comprendre une souffrance</button><button data-prompt="Aide-moi à distinguer les faits, les hypothèses et les interprétations.">Faits et hypothèses</button><button data-prompt="Aide-moi à préparer des questions pour un professionnel de santé.">Préparer un échange médical</button></div></div>
-  <div class="messages" id="messages"></div>
- </section>
- <div class="composewrap"><form class="compose" id="form"><textarea id="prompt" rows="2" placeholder="Écris librement à ITHÉLICE…"></textarea><div class="composefoot"><span class="muted" id="hint">Entrée pour envoyer · Maj + Entrée pour une nouvelle ligne</span><button class="send" id="send" type="submit">Envoyer ↑</button></div></form><div class="disclaimer">ITHÉLICE v1.1 est expérimental et ne remplace pas un professionnel de santé. En urgence, contacte les services d’urgence.</div></div>
-</main>
-</div>
-<div class="modalback" id="loader"><div class="modal"><h2>Préparation de l’IA ITHÉLICE</h2><p id="loadText">Préparation du moteur IA local…</p><div class="bar"><span id="progress"></span></div><p class="muted">Les réponses sont demandées à un service IA en ligne public. Aucune clé API personnelle n’est demandée.</p><div class="warning">Le service public peut être soumis à des restrictions, à des interruptions ou à des changements. Aucune garantie de gratuité illimitée ne peut être promise.</div><div class="modalactions"><button id="closeLoader">Fermer</button></div></div></div>
-<script type="module">
-let webllm=null;
-const $=id=>document.getElementById(id);
-const STORE="ithelice_local_chats_v2";
-const SYSTEM=`Tu es ITHÉLICE, assistant de raisonnement inspiré de la référence ITHÉLICE v1.1. Tu n'es pas médecin et ne prétends pas être thérapeute. Réduis la souffrance évitable sans créer de souffrance supplémentaire.
-Méthode : accueillir sans jugement; clarifier la souffrance; séparer faits/observations, hypothèses, interprétations et conclusions; explorer plusieurs mécanismes possibles; examiner les menaces réelles, possibles, anticipées, passées ou incertaines; proposer des actions proportionnées et révisables; préciser les incertitudes et ce qui modifierait la conclusion.
-TMD : une menace corporelle est une piste, jamais une explication universelle. Ne déclare pas une menace imaginaire uniquement parce qu'elle n'est pas démontrée. Ne renforce pas les demandes répétitives de réassurance.
-Hélice cérébrale : modèle conceptuel non validé, pas une structure anatomique ou un mécanisme physiologique établi. La masse moléculaire seule ne permet pas de déduire l'accès cérébral ou l'effet clinique. Distingue faits établis et hypothèses.
-Biologie : ne tire pas de recommandation thérapeutique non démontrée des hypothèses sur matière, protons, ATP ou exosomes.
-Médicaments : ne prescris pas, ne donne pas de dosage et ne recommande pas l'arrêt d'un traitement. Toute modification d'un traitement prescrit, notamment antipsychotique, doit être discutée avec le prescripteur. En urgence médicale ou danger immédiat, priorité à la sécurité et aux secours.
-ARI : précise ce qui pourrait confirmer, limiter ou réfuter les hypothèses. IOB : compare bénéfices, risques, charge, alternatives et conséquences à court/long terme. Une même modification peut avoir des effets différents selon le critère et le niveau; explicite l'effet net. Réponds en français sauf demande contraire.`;
-let engine=true,loading=false,busy=false,webMode=false,chats=[];
-try{const old=JSON.parse(localStorage.getItem(STORE)||"[]");if(Array.isArray(old))chats=old}catch{}
-let currentId=chats[0]?.id||null;
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 h-screen overflow-hidden flex transition-colors duration-300">
 
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function current(){return chats.find(c=>c.id===currentId)}
-function save(){try{localStorage.setItem(STORE,JSON.stringify(chats))}catch{toast("Historique trop volumineux pour le stockage du navigateur.")}}
-function titleFrom(s){return s.replace(/\s+/g," ").trim().slice(0,48)||"Nouvelle conversation"}
-function timeFmt(ms){return (ms/1000).toFixed(1).replace(".",",")+" s"}
-function toast(s){$("hint").textContent=s;setTimeout(()=>$("hint").textContent="Entrée pour envoyer · Maj + Entrée pour une nouvelle ligne",3500)}
-function newChat(){const c={id:uid(),title:"Nouvelle conversation",updated:Date.now(),messages:[]};chats.unshift(c);currentId=c.id;save();render();$("prompt").focus()}
-function renderHistory(){const root=$("history");root.replaceChildren();if(!chats.length){const p=document.createElement("p");p.className="muted";p.textContent="Aucune conversation";p.style.padding="0 10px";root.append(p);return}chats.slice().sort((a,b)=>b.updated-a.updated).forEach(c=>{const row=document.createElement("div");row.className="histrow";const b=document.createElement("button");b.className="histopen"+(c.id===currentId?" active":"");b.textContent=c.title;b.onclick=()=>{currentId=c.id;render()};const d=document.createElement("button");d.className="delete";d.textContent="×";d.title="Supprimer";d.onclick=()=>{if(confirm("Supprimer cette conversation ?")){chats=chats.filter(x=>x.id!==c.id);if(currentId===c.id)currentId=chats[0]?.id||null;save();render()}};row.append(b,d);root.append(row)})}
-function button(text,fn){const b=document.createElement("button");b.textContent=text;b.onclick=fn;return b}
-function render(){renderHistory();const c=current();$("title").textContent=c?.title||"Nouvelle conversation";$("welcome").classList.toggle("hidden",!!c?.messages.length);const root=$("messages");root.replaceChildren();if(c)c.messages.forEach((m,i)=>{const row=document.createElement("article");row.className="msg "+m.role;const av=document.createElement("div");av.className="avatar";av.textContent=m.role==="user"?"VO":"I";const body=document.createElement("div");body.className="body";const head=document.createElement("div");head.className="head";const who=document.createElement("strong");who.textContent=m.role==="user"?"Vous":"ITHÉLICE";head.append(who);if(m.elapsed!=null){const t=document.createElement("span");t.className="time";t.textContent="Réponse en "+timeFmt(m.elapsed);head.append(t)}const bubble=document.createElement("div");bubble.className="bubble";bubble.textContent=m.content;body.append(head,bubble);const acts=document.createElement("div");acts.className="actions";if(m.role==="user")acts.append(button("Modifier",()=>editMessage(i,body)));else{acts.append(button("Copier la réponse",()=>copy(m.content)));acts.append(button("Réessayer",()=>retry(i)))}body.append(acts);row.append(av,body);root.append(row)});$("content").scrollTop=$("content").scrollHeight}
-function editMessage(i,body){const c=current(),m=c?.messages[i];if(!m)return;const ta=document.createElement("textarea");ta.className="edit";ta.value=m.content;body.querySelector(".bubble").replaceWith(ta);const acts=document.createElement("div");acts.className="actions";acts.append(button("Enregistrer et refaire la réponse",()=>{const text=ta.value.trim();if(!text)return;c.messages=c.messages.slice(0,i);c.messages.push({role:"user",content:text});c.title=titleFrom(text);c.updated=Date.now();save();render();answer(text)}),button("Annuler",render));body.querySelector(".actions").replaceWith(acts)}
-async function copy(text){try{await navigator.clipboard.writeText(text);toast("Réponse copiée.")}catch{const t=document.createElement("textarea");t.value=text;document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Réponse copiée.")}}
-async function loadEngine(){engine=true;$("loader").classList.add("open");$("loadText").textContent="ITHÉLICE utilise un service IA en ligne public : aucun modèle à télécharger et aucune compatibilité WebGPU nécessaire. La disponibilité dépend du service."; $("progress").style.width="100%";$("status").textContent="IA en ligne prête à essayer";$("dot").style.background="#68d6a0";setTimeout(()=>$("loader").classList.remove("open"),1700)}
-async function searchWeb(q){const url="https://fr.wikipedia.org/w/api.php?action=query&list=search&srsearch="+encodeURIComponent(q)+"&format=json&origin=*&srlimit=5";const r=await fetch(url);if(!r.ok)throw Error("Recherche Web indisponible (HTTP "+r.status+")");const d=await r.json();const hits=d?.query?.search||[];return hits.map((x,i)=>`${i+1}. ${x.title}\n${x.snippet.replace(/<[^>]*>/g,"")}\nhttps://fr.wikipedia.org/wiki/${encodeURIComponent(x.title.replace(/ /g,"_"))}`).join("\n\n")||"Aucun résultat trouvé sur Wikipédia."}
-async function answer(text){if(busy)return;busy=true;$("send").disabled=true;const c=current();const start=performance.now();const loadingRow=document.createElement("article");loadingRow.className="msg assistant";loadingRow.id="typing";loadingRow.innerHTML='<div class="avatar">I</div><div class="body"><div class="head"><strong>ITHÉLICE</strong><span class="time" id="timer">0,0 s</span></div><div class="muted">Réflexion en cours…</div></div>';$("messages").append(loadingRow);const tick=setInterval(()=>{const t=$("timer");if(t)t.textContent=timeFmt(performance.now()-start)},100);try{let context=c.messages.slice(-12).map(m=>(m.role==="user"?"Utilisateur":"ITHÉLICE")+": "+m.content).join("\\n");let webContext="";if(webMode){try{webContext="\\n\\nRésultats Wikipédia (extraits, à vérifier) :\\n"+await searchWeb(text)}catch(e){webContext="\\nRecherche Wikipédia indisponible : "+e.message}}const prompt=SYSTEM+"\\n\\nHistorique récent :\\n"+context+webContext+"\\n\\nRéponds maintenant au dernier message de l'utilisateur : "+text;const url="https://text.pollinations.ai/"+encodeURIComponent(prompt)+"?model=openai&seed="+Math.floor(Math.random()*1000000);const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),90000);let response;try{response=await fetch(url,{signal:controller.signal,headers:{"Accept":"text/plain"}})}finally{clearTimeout(timeout)}if(!response.ok)throw Error("Service IA indisponible (HTTP "+response.status+"). Réessaie plus tard.");const content=(await response.text()).trim();if(!content||content.length<2)throw Error("Le service IA a renvoyé une réponse vide.");c.messages.push({role:"assistant",content,elapsed:performance.now()-start});c.updated=Date.now()}catch(e){c.messages.push({role:"assistant",content:"Je n’ai pas pu joindre le service IA en ligne. Détail : "+(e.name==="AbortError"?"délai d’attente dépassé":e.message||e)+". Le service public peut être indisponible, limité ou avoir changé ses règles d’accès. Réessaie dans un moment.",elapsed:performance.now()-start,error:true});c.updated=Date.now()}finally{clearInterval(tick);busy=false;$("send").disabled=false;save();render()}}
-async function retry(i){const c=current();if(!c||busy)return;let u=i-1;while(u>=0&&c.messages[u].role!=="user")u--;if(u<0)return;const text=c.messages[u].content;c.messages=c.messages.slice(0,i);save();render();await answer(text)}
-$("form").addEventListener("submit",async e=>{e.preventDefault();const text=$("prompt").value.trim();if(!text||busy)return;if(!current())newChat();const c=current();c.messages.push({role:"user",content:text});if(c.messages.filter(m=>m.role==="user").length===1)c.title=titleFrom(text);c.updated=Date.now();$("prompt").value="";save();render();await answer(text)});
-$("prompt").addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();$("form").requestSubmit()}});
-$("newChat").onclick=newChat;$("closeSide").onclick=()=>$("sidebar").classList.add("closed");$("openSide").onclick=()=>$("sidebar").classList.toggle("closed");$("loadAI").onclick=loadEngine;$("closeLoader").onclick=()=>$("loader").classList.remove("open");$("clear").onclick=()=>{if(confirm("Effacer tout l’historique ?")){chats=[];currentId=null;save();render()}};$("webBtn").onclick=()=>{webMode=!webMode;$("webBtn").textContent=webMode?"🌐 Web : activé":"🌐 Web : Wikipédia";toast(webMode?"Les résultats Wikipédia seront recherchés pour les prochains messages.":"Recherche Web désactivée.")};document.querySelectorAll("[data-prompt]").forEach(b=>b.onclick=()=>{$("prompt").value=b.dataset.prompt;$("prompt").focus()});if(!currentId){const c={id:uid(),title:"Nouvelle conversation",updated:Date.now(),messages:[]};chats.unshift(c);currentId=c.id;save()}render();
+<!-- Sidebar -->
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transform -translate-x-full md:relative md:translate-x-0 sidebar-transition flex flex-col shadow-xl md:shadow-none">
+<div class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-dna text-ithelice-600 text-xl"></i>
+<span class="font-bold text-lg tracking-tight">ITHÉLICE <span class="text-xs font-normal text-gray-500 dark:text-gray-400">v1.1</span></span>
+</div>
+<button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><i class="fa-solid fa-times"></i></button>
+</div>
+<div class="p-3">
+<button onclick="createNewChat()" class="w-full flex items-center justify-center gap-2 bg-ithelice-600 hover:bg-ithelice-700 text-white py-2.5 px-4 rounded-lg transition-colors font-medium text-sm">
+<i class="fa-solid fa-plus"></i> Nouvelle conversation
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar px-3 pb-3" id="chatHistoryList"></div>
+<div class="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+<button onclick="toggleSettings()" class="w-full flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+<i class="fa-solid fa-gear"></i> Paramètres
+</button>
+<button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
+<i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:block"></i>
+<span class="dark:hidden">Mode sombre</span><span class="hidden dark:block">Mode clair</span>
+</button>
+</div>
+</aside>
+
+<div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden backdrop-blur-sm"></div>
+
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full relative">
+<header class="h-16 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md flex items-center justify-between px-4 sticky top-0 z-30">
+<div class="flex items-center gap-3 min-w-0 flex-1">
+<button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 hover:text-ithelice-600 flex-shrink-0"><i class="fa-solid fa-bars text-xl"></i></button>
+<div class="min-w-0 flex-1">
+<h1 class="font-semibold text-gray-800 dark:text-gray-100 truncate" id="headerTitle">ITHÉLICE</h1>
+<p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block truncate" id="headerSubtitle">Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute</p>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-shrink-0">
+<span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> IA Connectée
+</span>
+</div>
+</header>
+
+<div id="chatContainer" class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 space-y-6 scroll-smooth"></div>
+
+<div class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
+<div class="max-w-3xl mx-auto relative">
+<textarea id="messageInput" rows="1" placeholder="Posez votre question..."
+class="w-full bg-gray-100 dark:bg-gray-700 border-0 rounded-xl px-4 py-3 pr-12 resize-none focus:ring-2 focus:ring-ithelice-500 focus:bg-white dark:focus:bg-gray-600 transition-all custom-scrollbar text-sm md:text-base"
+onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+<button onclick="sendMessage()" id="sendBtn" class="absolute right-2 bottom-2 p-2 bg-ithelice-600 hover:bg-ithelice-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+<i class="fa-solid fa-paper-plane text-sm"></i>
+</button>
+</div>
+<p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-2">
+ITHÉLICE est un modèle expérimental. Les informations sont fournies à titre éducatif.
+</p>
+</div>
+</main>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="fixed inset-0 z-50 hidden">
+<div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleSettings()"></div>
+<div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto custom-scrollbar">
+<h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-gear text-ithelice-600"></i> Paramètres</h3>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Modèle IA</label>
+<select id="aiModel" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5 focus:ring-ithelice-500 focus:border-ithelice-500">
+<option value="openai">OpenAI GPT (recommandé)</option>
+<option value="mistral">Mistral</option>
+<option value="llama">Llama</option>
+<option value="qwen-coder">Qwen Coder</option>
+</select>
+<p class="text-xs text-gray-500 mt-1">Via Pollinations.ai — gratuit, illimité, sans clé API.</p>
+</div>
+</div>
+<div class="mt-6 flex justify-end gap-3">
+<button onclick="toggleSettings()" class="px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">Fermer</button>
+<button onclick="saveSettings()" class="px-4 py-2 text-sm bg-ithelice-600 hover:bg-ithelice-700 text-white rounded-lg transition-colors">Sauvegarder</button>
+</div>
+</div>
+</div>
+
+<script>
+// --- STATE MANAGEMENT ---
+let chats = JSON.parse(localStorage.getItem('ithelice_chats')) || [];
+let currentChatId = localStorage.getItem('ithelice_current_chat') || null;
+let isSidebarOpen = false;
+let settings = JSON.parse(localStorage.getItem('ithelice_settings')) || { model: 'openai' };
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+if (chats.length === 0) createNewChat();
+else if (!currentChatId || !chats.find(c => c.id === currentChatId)) currentChatId = chats[0].id;
+
+renderSidebar();
+renderChat();
+applyDarkMode();
+document.getElementById('aiModel').value = settings.model;
+});
+
+// --- SIDEBAR & NAVIGATION ---
+function toggleSidebar() {
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('sidebarOverlay');
+isSidebarOpen = !isSidebarOpen;
+if (isSidebarOpen) {
+sidebar.classList.remove('-translate-x-full');
+overlay.classList.remove('hidden');
+} else {
+sidebar.classList.add('-translate-x-full');
+overlay.classList.add('hidden');
+}
+}
+
+function createNewChat() {
+const newChat = {
+id: Date.now().toString(),
+title: 'Nouvelle conversation',
+messages: [],
+createdAt: new Date().toISOString()
+};
+chats.unshift(newChat);
+currentChatId = newChat.id;
+saveData();
+renderSidebar();
+renderChat();
+updateHeader();
+
+setTimeout(() => {
+document.getElementById('messageInput').focus();
+}, 100);
+
+if (window.innerWidth < 768) toggleSidebar();
+}
+
+function switchChat(id) {
+if (currentChatId === id) return;
+currentChatId = id;
+saveData();
+renderSidebar();
+renderChat();
+updateHeader();
+if (window.innerWidth < 768) toggleSidebar();
+}
+
+function deleteChat(id, event) {
+event.stopPropagation();
+if (!confirm('Supprimer cette conversation ?')) return;
+chats = chats.filter(c => c.id !== id);
+if (currentChatId === id) {
+currentChatId = chats.length > 0 ? chats[0].id : null;
+if (!currentChatId) createNewChat();
+else {
+renderChat();
+updateHeader();
+}
+}
+saveData();
+renderSidebar();
+}
+
+function renderSidebar() {
+const list = document.getElementById('chatHistoryList');
+list.innerHTML = chats.map(chat => &lt;div onclick="switchChat('${chat.id}')" class="group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors mb-1 ${currentChatId === chat.id ? 'bg-ithelice-50 dark:bg-ithelice-900/20 border border-ithelice-200 dark:border-ithelice-800' : 'hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent'}"&gt; &lt;div class="flex-1 min-w-0"&gt; &lt;p class="text-sm font-medium truncate text-gray-800 dark:text-gray-200"&gt;${escapeHtml(chat.title)}</p>
+<p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${new Date(chat.createdAt).toLocaleDateString()} ${chat.messages.length === 0 ? '• <span class="text-ithelice-600 dark:text-ithelice-400">Vide</span>' : •${chat.messages.length} msg}&lt;/p&gt; &lt;/div&gt; &lt;button onclick="deleteChat('${chat.id}', event)" class="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all ml-2 flex-shrink-0">
+<i class="fa-solid fa-trash-can text-xs"></i>
+</button>
+</div>
+`).join('');
+}
+
+function updateHeader() {
+const chat = chats.find(c => c.id === currentChatId);
+const headerTitle = document.getElementById('headerTitle');
+const headerSubtitle = document.getElementById('headerSubtitle');
+
+if (!chat) {
+headerTitle.textContent = 'ITHÉLICE';
+headerSubtitle.textContent = 'Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute';
+return;
+}
+
+headerTitle.textContent = chat.title;
+headerTitle.classList.add('chat-title-pulse');
+setTimeout(() => headerTitle.classList.remove('chat-title-pulse'), 500);
+
+if (chat.messages.length === 0) {
+headerSubtitle.innerHTML = '<span class="text-ithelice-600 dark:text-ithelice-400 font-medium">Nouvelle conversation — prête à démarrer</span>';
+} else {
+headerSubtitle.textContent = ``${chat.messages.length} message {new Date(chat.createdAt).toLocaleString()}`;
+}
+}
+
+function renderChat() {
+const container = document.getElementById('chatContainer');
+const chat = chats.find(c => c.id === currentChatId);
+
+if (!chat || chat.messages.length === 0) {
+container.innerHTML = &lt;div class="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-4"&gt; &lt;div class="w-16 h-16 rounded-2xl bg-ithelice-100 dark:bg-ithelice-900/30 flex items-center justify-center"&gt; &lt;i class="fa-solid fa-brain text-ithelice-600 text-2xl"&gt;&lt;/i&gt; &lt;/div&gt; &lt;div class="max-w-md"&gt; &lt;h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-1"&gt; ${chat && chat.title === 'Nouvelle conversation' ? 'Nouvelle conversation prête' : 'Bienvenue dans ITHÉLICE v1.1'}
+</h3>
+<p class="text-sm">
+${chat && chat.title === 'Nouvelle conversation' ? 'Commencez à écrire ci-dessous pour démarrer la conversation avec ITHÉLICE.' : 'Connectée à une vraie IA (gratuite, illimitée, sans clé). Posez n\'importe quelle question : phobies, anxiété, traitements, biologie... L\'IA appliquera les principes TMD, ARI et IOB à votre situation.'} &lt;/p&gt; &lt;p class="text-xs mt-3 text-red-500 dark:text-red-400 font-medium"&gt;&lt;i class="fa-solid fa-triangle-exclamation mr-1"&gt;&lt;/i&gt; Ne remplace pas un avis médical ou psychiatrique.&lt;/p&gt; &lt;/div&gt; &lt;/div>;
+updateHeader();
+return;
+}
+
+container.innerHTML = chat.messages.map((msg, index) => {
+if (msg.role === 'user') {
+return &lt;div class="flex justify-end message-bubble"&gt; &lt;div class="max-w-[85%] md:max-w-[70%] bg-ithelice-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-sm relative group"&gt; &lt;div id="user-text-${index}" class="text-sm md:text-base whitespace-pre-wrap">${escapeHtml(msg.content)}&lt;/div&gt; &lt;div id="user-edit-${index}" class="hidden">
+<textarea class="w-full bg-ithelice-700 text-white rounded p-2 text-sm mb-2" rows="3" id="user-input-${index}"&gt;${escapeHtml(msg.content)}</textarea>
+<div class="flex gap-2 justify-end">
+<button onclick="cancelEdit(${index})" class="text-xs bg-white/20 hover:bg-white/30 px-3 py-1 rounded"&gt;Annuler&lt;/button&gt; &lt;button onclick="saveEdit(${index})" class="text-xs bg-white text-ithelice-700 font-medium px-3 py-1 rounded">Sauvegarder et régénérer</button>
+</div>
+</div>
+<div class="flex justify-end gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button onclick="toggleEdit(${index})" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded flex items-center gap-1"&gt;&lt;i class="fa-solid fa-pen"&gt;&lt;/i&gt; Modifier&lt;/button&gt; &lt;/div&gt; &lt;/div&gt; &lt;/div>;
+} else {
+return &lt;div class="flex justify-start message-bubble"&gt; &lt;div class="max-w-[85%] md:max-w-[70%] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm relative group"&gt; &lt;div class="flex items-center gap-2 mb-2 pb-2 border-b border-gray-100 dark:border-gray-700"&gt; &lt;i class="fa-solid fa-robot text-ithelice-600 text-xs"&gt;&lt;/i&gt; &lt;span class="text-xs font-semibold text-ithelice-700 dark:text-ithelice-400"&gt;ITHÉLICE&lt;/span&gt; ${msg.responseTime ? <span class="text-xs text-gray-400 ml-auto"&gt;&lt;i class="fa-regular fa-clock mr-1"&gt;&lt;/i&gt;${msg.responseTime}s</span>: ''} &lt;/div&gt; &lt;div class="prose prose-sm dark:prose-invert max-w-none text-gray-800 dark:text-gray-200"&gt; ${marked.parse(msg.content)}
+</div>
+<div class="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
+<button onclick="copyResponse(this, `${btoa(unescape(encodeURIComponent(msg.content)))}\)" class="text-xs text-gray-500 hover:text-ithelice-600 dark:hover:text-ithelice-400 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+<i class="fa-regular fa-copy"></i> Copier
+</button>
+<button onclick="retryResponse(${index})" class="text-xs text-gray-500 hover:text-ithelice-600 dark:hover:text-ithelice-400 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"&gt; &lt;i class="fa-solid fa-rotate-right"&gt;&lt;/i&gt; Réessayer &lt;/button&gt; &lt;/div&gt; &lt;/div&gt; &lt;/div>;
+}
+}).join('');
+scrollToBottom();
+updateHeader();
+}
+
+function toggleEdit(index) {
+document.getElementById(user-text-${index}).classList.add('hidden'); document.getElementById(user-edit- {index}`).focus();
+}
+
+function cancelEdit(index) {
+document.getElementById(user-text-${index}).classList.remove('hidden'); document.getElementById(user-edit-${index}).classList.add('hidden');
+}
+
+function saveEdit(index) {
+const newContent = document.getElementById(user-input-${index}`).value.trim();
+if (!newContent) return;
+const chat = chats.find(c => c.id === currentChatId);
+chat.messages[index].content = newContent;
+chat.messages = chat.messages.slice(0, index + 1);
+saveData();
+renderChat();
+generateAIResponse();
+}
+
+function retryResponse(index) {
+const chat = chats.find(c => c.id === currentChatId);
+chat.messages.splice(index, 1);
+saveData();
+renderChat();
+generateAIResponse();
+}
+
+function copyResponse(btn, base64Content) {
+const text = decodeURIComponent(escape(atob(base64Content)));
+navigator.clipboard.writeText(text).then(() => {
+const originalHTML = btn.innerHTML;
+btn.innerHTML = '<i class="fa-solid fa-check"></i> Copié !';
+setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+});
+}
+
+function handleKeyDown(e) {
+if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(textarea) {
+textarea.style.height = 'auto';
+textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+}
+
+function sendMessage() {
+const input = document.getElementById('messageInput');
+const content = input.value.trim();
+if (!content) return;
+
+const chat = chats.find(c => c.id === currentChatId);
+if (!chat) return;
+
+if (chat.messages.length === 0) {
+chat.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
+renderSidebar();
+}
+
+chat.messages.push({ role: 'user', content: content });
+input.value = '';
+input.style.height = 'auto';
+saveData();
+renderChat();
+generateAIResponse();
+}
+
+async function generateAIResponse() {
+const chat = chats.find(c => c.id === currentChatId);
+if (!chat) return;
+
+const container = document.getElementById('chatContainer');
+const typingId = 'typing-' + Date.now();
+
+container.innerHTML += &lt;div id="${typingId}" class="flex justify-start message-bubble">
+<div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+<div class="flex space-x-1.5">
+<div class="w-2 h-2 bg-ithelice-500 rounded-full typing-dot"></div>
+<div class="w-2 h-2 bg-ithelice-500 rounded-full typing-dot"></div>
+<div class="w-2 h-2 bg-ithelice-500 rounded-full typing-dot"></div>
+</div>
+</div>
+</div>`;
+scrollToBottom();
+
+const startTime = performance.now();
+let responseText = '';
+let responseTime = 0;
+
+try {
+responseText = await fetchPollinationsResponse(chat.messages);
+const endTime = performance.now();
+responseTime = ((endTime - startTime) / 1000).toFixed(2);
+} catch (error) {
+responseText = **Erreur de connexion à l'IA**\n\n${error.message}\n\nVérifiez votre connexion internet.`;
+responseTime = '0.00';
+}
+
+const typingEl = document.getElementById(typingId);
+if (typingEl) typingEl.remove();
+
+chat.messages.push({ role: 'assistant', content: responseText, responseTime: responseTime });
+saveData();
+renderChat();
+}
+
+// --- POLLINATIONS.AI API avec prompt optimisé pour réponses courtes ---
+async function fetchPollinationsResponse(messages) {
+const systemPrompt = `Tu es ITHÉLICE v1.1, une architecture expérimentale de raisonnement thérapeutique.
+
+CONTRAINTE ABSOLUE DE LONGUEUR : Tes réponses doivent être COURTES et CONCISES, maximum 250-300 mots. Va à l'essentiel. Pas de répétitions. Pas de développements excessifs. Une seule réponse complète qui tient dans un message court.
+
+Principes à appliquer de façon condensée :
+
+1. TMD : Identifier la menace sous-jacente (réelle/anticipée/obsolète), proposer une action adaptée pour réduire la souffrance.
+
+2. Hélice Cérébrale : Modèle conceptuel de la dynamique de traitement de l'information. Examiner les facteurs modificateurs (BHE, concentration, métabolisme). Hypothèse de travail, pas vérité établie.
+
+3. Substrat biologique : Conditions matérielles/énergétiques (protons, exosomes, mitochondries). Prudent sur la supplémentation.
+
+4. ARI : Distinguer observation/hypothèse/interprétation/conclusion. Proportionner la certitude.
+
+5. IOB : Réduire la souffrance évitable sans en produire. Actions concrètes et proportionnées.
+
+6. LIMITES : Tu ne remplaces pas un médecin. Tu ne modifies jamais les traitements. Oriente vers un professionnel pour toute décision médicale. En cas de détresse aiguë → services d'urgence.
+
+**Style : Réponse CONTEXTUELLE et SPÉCIFIQUE. Structurée mais naturelle. Markdown pour la clarté (titres, listes, gras). CONCIS. 250-300 mots maximum. Une seule réponse complète.`;
+
+const formattedMessages = [
+{ role: 'system', content: systemPrompt },
+...messages.map(m => ({ role: m.role, content: m.content }))
+ ];
+
+const response = await fetch('https://text.pollinations.ai/', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+messages: formattedMessages,
+model: settings.model,
+seed: Math.floor(Math.random() * 1000000),
+max_tokens: 500
+})
+});
+
+if (!response.ok) {
+const err = await response.text();
+throw new Error(Erreur API${response.status}: ${err.substring(0, 200)}`);
+}
+
+const text = await response.text();
+return text.trim();
+}
+
+function saveData() {
+localStorage.setItem('ithelice_chats', JSON.stringify(chats));
+localStorage.setItem('ithelice_current_chat', currentChatId);
+}
+
+function scrollToBottom() {
+const container = document.getElementById('chatContainer');
+container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(text) {
+const div = document.createElement('div');
+div.textContent = text;
+return div.innerHTML;
+}
+
+function toggleSettings() {
+document.getElementById('settingsModal').classList.toggle('hidden');
+}
+
+function saveSettings() {
+settings.model = document.getElementById('aiModel').value;
+localStorage.setItem('ithelice_settings', JSON.stringify(settings));
+toggleSettings();
+alert('Paramètres sauvegardés.');
+}
+
+function toggleDarkMode() {
+const isDark = document.documentElement.classList.toggle('dark');
+localStorage.setItem('ithelice_dark_mode', isDark);
+}
+
+function applyDarkMode() {
+const isDark = localStorage.getItem('ithelice_dark_mode') === 'true' ||
+(!localStorage.getItem('ithelice_dark_mode') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+if (isDark) document.documentElement.classList.add('dark');
+}
 </script>
 </body>
 </html>
