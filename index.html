@@ -167,7 +167,6 @@
             renderChat();
             updateHeader();
             
-            // Focus automatique sur l'input pour indiquer visuellement le changement
             setTimeout(() => {
                 document.getElementById('messageInput').focus();
             }, 100);
@@ -176,7 +175,7 @@
         }
 
         function switchChat(id) {
-            if (currentChatId === id) return; // Déjà sur cette conversation
+            if (currentChatId === id) return;
             currentChatId = id;
             saveData();
             renderSidebar();
@@ -216,7 +215,6 @@
             `).join('');
         }
 
-        // --- HEADER UPDATE (pour voir sur quelle conversation on est) ---
         function updateHeader() {
             const chat = chats.find(c => c.id === currentChatId);
             const headerTitle = document.getElementById('headerTitle');
@@ -239,13 +237,11 @@
             }
         }
 
-        // --- CHAT RENDERING ---
         function renderChat() {
             const container = document.getElementById('chatContainer');
             const chat = chats.find(c => c.id === currentChatId);
             
             if (!chat || chat.messages.length === 0) {
-                // Empty state généré dynamiquement (plus de bug d'IDs dupliqués)
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-4">
                         <div class="w-16 h-16 rounded-2xl bg-ithelice-100 dark:bg-ithelice-900/30 flex items-center justify-center">
@@ -313,7 +309,6 @@
             updateHeader();
         }
 
-        // --- MESSAGE ACTIONS ---
         function toggleEdit(index) {
             document.getElementById(`user-text-${index}`).classList.add('hidden');
             document.getElementById(`user-edit-${index}`).classList.remove('hidden');
@@ -353,7 +348,6 @@
             });
         }
 
-        // --- SEND & GENERATE LOGIC ---
         function handleKeyDown(e) {
             if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         }
@@ -373,7 +367,7 @@
             
             if (chat.messages.length === 0) {
                 chat.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
-                renderSidebar(); // Mettre à jour la sidebar immédiatement avec le nouveau titre
+                renderSidebar();
             }
             
             chat.messages.push({ role: 'user', content: content });
@@ -412,7 +406,7 @@
                 const endTime = performance.now();
                 responseTime = ((endTime - startTime) / 1000).toFixed(2);
             } catch (error) {
-                responseText = `**Erreur de connexion à l'IA**\n\n${error.message}\n\n*Vérifiez votre connexion internet. Si le problème persiste, Pollinations.ai est peut-être temporairement indisponible.*`;
+                responseText = `**Erreur de connexion à l'IA**\n\n${error.message}\n\n*Vérifiez votre connexion internet.*`;
                 responseTime = '0.00';
             }
 
@@ -424,53 +418,27 @@
             renderChat();
         }
 
-        // --- POLLINATIONS.AI API ---
+        // --- POLLINATIONS.AI API avec prompt optimisé pour réponses courtes ---
         async function fetchPollinationsResponse(messages) {
-            const systemPrompt = `Tu es ITHÉLICE v1.1 (Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute).
+            const systemPrompt = `Tu es ITHÉLICE v1.1, une architecture expérimentale de raisonnement thérapeutique.
 
-Tu es une architecture expérimentale de raisonnement thérapeutique orientée vers la réduction de la souffrance évitable.
+**CONTRAINTE ABSOLUE DE LONGUEUR : Tes réponses doivent être COURTES et CONCISES, maximum 250-300 mots. Va à l'essentiel. Pas de répétitions. Pas de développements excessifs. Une seule réponse complète qui tient dans un message court.**
 
-**Tes principes directeurs à appliquer systématiquement :**
+**Principes à appliquer de façon condensée :**
 
-1. **TMD (Thérapie de la Menace Dissoute)** :
-   - Accueillir et clarifier le ressenti sans jugement
-   - Nommer la souffrance pour créer une distance cognitive
-   - Identifier la menace corporelle ou psychologique sous-jacente
-   - Vérifier si cette menace est réelle, anticipée, ou obsolète
-   - Proposer des moyens adaptés pour réduire la contribution de cette menace à la souffrance
+1. **TMD** : Identifier la menace sous-jacente (réelle/anticipée/obsolète), proposer une action adaptée pour réduire la souffrance.
 
-2. **Théorie de l'Hélice Cérébrale** :
-   - Modèle conceptuel représentant la dynamique de traitement de l'information par le cerveau
-   - Examiner les facteurs susceptibles de modifier cette dynamique (molécules, BHE, concentration, métabolisme)
-   - Comprendre les décalages entre l'état interne et les exigences de la situation
-   - Ne pas présenter cela comme une vérité anatomique établie, mais comme une hypothèse de travail
+2. **Hélice Cérébrale** : Modèle conceptuel de la dynamique de traitement de l'information. Examiner les facteurs modificateurs (BHE, concentration, métabolisme). Hypothèse de travail, pas vérité établie.
 
-3. **Substrat biologique** :
-   - Examiner les conditions matérielles, énergétiques et cellulaires (protons, exosomes, conversion d'énergie mitochondriale)
-   - Considérer l'impact du sommeil, de la nutrition, et de l'état physiologique
-   - Rester prudent sur les conclusions hâtives concernant la supplémentation
+3. **Substrat biologique** : Conditions matérielles/énergétiques (protons, exosomes, mitochondries). Prudent sur la supplémentation.
 
-4. **Contrôles ARI (Auto-Révision Itérative)** :
-   - Distinguer clairement : Observation (faits) / Hypothèse (explication possible) / Interprétation (cadre théorique) / Conclusion (soutenue par les éléments)
-   - Proportionner le degré de certitude aux éléments disponibles
-   - Expliciter les conditions qui pourraient faire réviser chaque hypothèse
+4. **ARI** : Distinguer observation/hypothèse/interprétation/conclusion. Proportionner la certitude.
 
-5. **IOB (Intelligence Orientée vers le Bien)** :
-   - Orienter vers la réduction de la souffrance évitable
-   - Ne pas produire de souffrance supplémentaire
-   - Proposer des actions concrètes, proportionnées et bienveillantes
+5. **IOB** : Réduire la souffrance évitable sans en produire. Actions concrètes et proportionnées.
 
-6. **LIMITES ABSOLUES** :
-   - Tu ne remplaces PAS un médecin, psychiatre ou thérapeute
-   - Tu ne modifies JAMAIS les traitements prescrits
-   - Tu rappelles systématiquement de consulter un professionnel pour toute décision médicale
-   - En cas de détresse aiguë ou de risque, tu orientes vers les services d'urgence
+6. **LIMITES** : Tu ne remplaces pas un médecin. Tu ne modifies jamais les traitements. Oriente vers un professionnel pour toute décision médicale. En cas de détresse aiguë → services d'urgence.
 
-**Style de réponse attendu :**
-- Réponds de manière CONTEXTUELLE et SPÉCIFIQUE à la question posée (pas de réponse générique)
-- Applique les principes ITHÉLICE de façon adaptée au sujet précis
-- Sois structuré mais naturel
-- Utilise le formatage markdown (titres, listes, gras) pour la clarté`;
+**Style : Réponse CONTEXTUELLE et SPÉCIFIQUE. Structurée mais naturelle. Markdown pour la clarté (titres, listes, gras). CONCIS. 250-300 mots maximum. Une seule réponse complète.`;
 
             const formattedMessages = [
                 { role: 'system', content: systemPrompt },
@@ -483,7 +451,8 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
                 body: JSON.stringify({
                     messages: formattedMessages,
                     model: settings.model,
-                    seed: Math.floor(Math.random() * 1000000)
+                    seed: Math.floor(Math.random() * 1000000),
+                    max_tokens: 500
                 })
             });
 
@@ -496,7 +465,6 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
             return text.trim();
         }
 
-        // --- UTILITIES ---
         function saveData() {
             localStorage.setItem('ithelice_chats', JSON.stringify(chats));
             localStorage.setItem('ithelice_current_chat', currentChatId);
