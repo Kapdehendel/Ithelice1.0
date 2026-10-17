@@ -10,8 +10,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
@@ -23,6 +21,8 @@
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        .prose pre { background-color: #f1f5f9; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; }
+        .dark .prose pre { background-color: #1e293b; }
     </style>
     <script>
         tailwind.config = {
@@ -30,14 +30,7 @@
             theme: {
                 extend: {
                     colors: {
-                        ithelice: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            900: '#0c4a6e',
-                        }
+                        ithelice: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
                     }
                 }
             }
@@ -53,77 +46,60 @@
                 <i class="fa-solid fa-dna text-ithelice-600 text-xl"></i>
                 <span class="font-bold text-lg tracking-tight">ITHÉLICE <span class="text-xs font-normal text-gray-500 dark:text-gray-400">v1.1</span></span>
             </div>
-            <button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
-                <i class="fa-solid fa-times"></i>
-            </button>
+            <button onclick="toggleSidebar()" class="md:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"><i class="fa-solid fa-times"></i></button>
         </div>
-        
         <div class="p-3">
             <button onclick="createNewChat()" class="w-full flex items-center justify-center gap-2 bg-ithelice-600 hover:bg-ithelice-700 text-white py-2.5 px-4 rounded-lg transition-colors font-medium text-sm">
                 <i class="fa-solid fa-plus"></i> Nouvelle conversation
             </button>
         </div>
-
-        <div class="flex-1 overflow-y-auto custom-scrollbar px-3 pb-3" id="chatHistoryList">
-            <!-- History items injected here -->
-        </div>
-
+        <div class="flex-1 overflow-y-auto custom-scrollbar px-3 pb-3" id="chatHistoryList"></div>
         <div class="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
             <button onclick="toggleSettings()" class="w-full flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
                 <i class="fa-solid fa-gear"></i> Paramètres & API
             </button>
             <button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
-                <i class="fa-solid fa-moon dark:hidden"></i>
-                <i class="fa-solid fa-sun hidden dark:block"></i>
-                <span class="dark:hidden">Mode sombre</span>
-                <span class="hidden dark:block">Mode clair</span>
+                <i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:block"></i>
+                <span class="dark:hidden">Mode sombre</span><span class="hidden dark:block">Mode clair</span>
             </button>
         </div>
     </aside>
 
-    <!-- Overlay for mobile sidebar -->
     <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden backdrop-blur-sm"></div>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full relative">
-        <!-- Header -->
         <header class="h-16 border-b border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md flex items-center justify-between px-4 sticky top-0 z-30">
             <div class="flex items-center gap-3">
-                <button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 hover:text-ithelice-600">
-                    <i class="fa-solid fa-bars text-xl"></i>
-                </button>
+                <button onclick="toggleSidebar()" class="md:hidden text-gray-600 dark:text-gray-300 hover:text-ithelice-600"><i class="fa-solid fa-bars text-xl"></i></button>
                 <div>
                     <h1 class="font-semibold text-gray-800 dark:text-gray-100">ITHÉLICE</h1>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">Intelligence Thérapeutique de l’Hélice Cérébrale et de la Menace Dissoute</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">Intelligence Thérapeutique de l’Hélice Cérébrale et de la Menace Dissoute</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                    Opérationnel
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Opérationnel
                 </span>
             </div>
         </header>
 
-        <!-- Chat Area -->
         <div id="chatContainer" class="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-6 space-y-6 scroll-smooth">
-            <!-- Messages injected here -->
             <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-4" id="emptyState">
                 <div class="w-16 h-16 rounded-2xl bg-ithelice-100 dark:bg-ithelice-900/30 flex items-center justify-center">
                     <i class="fa-solid fa-brain text-ithelice-600 text-2xl"></i>
                 </div>
                 <div class="max-w-md">
                     <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-1">Bienvenue dans ITHÉLICE v1.1</h3>
-                    <p class="text-sm">Architecture expérimentale de raisonnement thérapeutique. Je peux vous aider à analyser la souffrance, les menaces perçues et les dynamiques cérébrales selon les principes TMD, ARI et IOB.</p>
+                    <p class="text-sm">Posez une question sur la claustrophobie, l'agoraphobie, les traitements, ou demandez une démonstration concrète du raisonnement TMD et ARI.</p>
                     <p class="text-xs mt-3 text-red-500 dark:text-red-400 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Ne remplace pas un avis médical ou psychiatrique.</p>
                 </div>
             </div>
         </div>
 
-        <!-- Input Area -->
         <div class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4">
             <div class="max-w-3xl mx-auto relative">
-                <textarea id="messageInput" rows="1" placeholder="Décrivez votre ressenti ou posez votre question..." 
+                <textarea id="messageInput" rows="1" placeholder="Décrivez votre ressenti (ex: 'Imaginons que je sois claustrophobe')..." 
                     class="w-full bg-gray-100 dark:bg-gray-700 border-0 rounded-xl px-4 py-3 pr-12 resize-none focus:ring-2 focus:ring-ithelice-500 focus:bg-white dark:focus:bg-gray-600 transition-all custom-scrollbar text-sm md:text-base"
                     onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
                 <button onclick="sendMessage()" id="sendBtn" class="absolute right-2 bottom-2 p-2 bg-ithelice-600 hover:bg-ithelice-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
@@ -140,20 +116,18 @@
     <div id="settingsModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleSettings()"></div>
         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-gear text-ithelice-600"></i> Paramètres de connexion
-            </h3>
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-gear text-ithelice-600"></i> Paramètres de connexion</h3>
             <div class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mode de fonctionnement</label>
                     <select id="apiMode" onchange="toggleApiFields()" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5 focus:ring-ithelice-500 focus:border-ithelice-500">
-                        <option value="local">Moteur Local ITHÉLICE (Gratuit, illimité, hors-ligne)</option>
+                        <option value="local">Moteur Local ITHÉLICE (Gratuit, illimité, adapté au contexte)</option>
                         <option value="api">API Externe (Nécessite une clé, connecté à internet)</option>
                     </select>
                 </div>
                 <div id="apiFields" class="hidden space-y-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL de l'API (ex: OpenRouter)</label>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL de l'API</label>
                         <input type="text" id="apiUrl" value="https://openrouter.ai/api/v1/chat/completions" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5">
                     </div>
                     <div>
@@ -164,10 +138,6 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Modèle</label>
                         <input type="text" id="apiModel" value="meta-llama/llama-3-8b-instruct" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5">
                     </div>
-                    <p class="text-xs text-gray-500 dark:text-gray-400">
-                        <i class="fa-solid fa-info-circle mr-1"></i>
-                        Le mode local utilise le texte de référence ITHÉLICE v1.1 pour générer des réponses structurées sans envoyer de données à l'extérieur.
-                    </p>
                 </div>
             </div>
             <div class="mt-6 flex justify-end gap-3">
@@ -193,7 +163,6 @@
             renderChat();
             applyDarkMode();
             
-            // Load settings to UI
             document.getElementById('apiMode').value = settings.mode;
             document.getElementById('apiUrl').value = settings.apiUrl;
             document.getElementById('apiKey').value = settings.apiKey;
@@ -206,7 +175,6 @@
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
             isSidebarOpen = !isSidebarOpen;
-            
             if (isSidebarOpen) {
                 sidebar.classList.remove('-translate-x-full');
                 overlay.classList.remove('hidden');
@@ -217,12 +185,7 @@
         }
 
         function createNewChat() {
-            const newChat = {
-                id: Date.now().toString(),
-                title: 'Nouvelle conversation',
-                messages: [],
-                createdAt: new Date().toISOString()
-            };
+            const newChat = { id: Date.now().toString(), title: 'Nouvelle conversation', messages: [], createdAt: new Date().toISOString() };
             chats.unshift(newChat);
             currentChatId = newChat.id;
             saveData();
@@ -255,8 +218,7 @@
         function renderSidebar() {
             const list = document.getElementById('chatHistoryList');
             list.innerHTML = chats.map(chat => `
-                <div onclick="switchChat('${chat.id}')" 
-                     class="group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors mb-1 ${currentChatId === chat.id ? 'bg-ithelice-50 dark:bg-ithelice-900/20 border border-ithelice-200 dark:border-ithelice-800' : 'hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent'}">
+                <div onclick="switchChat('${chat.id}')" class="group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors mb-1 ${currentChatId === chat.id ? 'bg-ithelice-50 dark:bg-ithelice-900/20 border border-ithelice-200 dark:border-ithelice-800' : 'hover:bg-gray-100 dark:hover:bg-gray-700 border border-transparent'}">
                     <div class="flex-1 min-w-0">
                         <p class="text-sm font-medium truncate text-gray-800 dark:text-gray-200">${chat.title}</p>
                         <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${new Date(chat.createdAt).toLocaleDateString()}</p>
@@ -274,17 +236,7 @@
             const chat = chats.find(c => c.id === currentChatId);
             
             if (!chat || chat.messages.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-center text-gray-500 dark:text-gray-400 space-y-4">
-                        <div class="w-16 h-16 rounded-2xl bg-ithelice-100 dark:bg-ithelice-900/30 flex items-center justify-center">
-                            <i class="fa-solid fa-dna text-ithelice-600 text-2xl"></i>
-                        </div>
-                        <div class="max-w-md">
-                            <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-1">Bienvenue dans ITHÉLICE v1.1</h3>
-                            <p class="text-sm">Architecture expérimentale de raisonnement thérapeutique. Je peux vous aider à analyser la souffrance, les menaces perçues et les dynamiques cérébrales selon les principes TMD, ARI et IOB.</p>
-                            <p class="text-xs mt-3 text-red-500 dark:text-red-400 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Ne remplace pas un avis médical ou psychiatrique.</p>
-                        </div>
-                    </div>`;
+                container.innerHTML = document.getElementById('emptyState').outerHTML;
                 return;
             }
 
@@ -302,9 +254,7 @@
                                 </div>
                             </div>
                             <div class="flex justify-end gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="toggleEdit(${index})" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded flex items-center gap-1">
-                                    <i class="fa-solid fa-pen"></i> Modifier
-                                </button>
+                                <button onclick="toggleEdit(${index})" class="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded flex items-center gap-1"><i class="fa-solid fa-pen"></i> Modifier</button>
                             </div>
                         </div>
                     </div>`;
@@ -321,7 +271,7 @@
                                 ${marked.parse(msg.content)}
                             </div>
                             <div class="flex gap-2 mt-3 pt-2 border-t border-gray-100 dark:border-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onclick="copyResponse('${escapeHtml(msg.content).replace(/'/g, "\\'")}')" class="text-xs text-gray-500 hover:text-ithelice-600 dark:hover:text-ithelice-400 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                                <button onclick="copyResponse(this, \`${btoa(unescape(encodeURIComponent(msg.content)))}\`)" class="text-xs text-gray-500 hover:text-ithelice-600 dark:hover:text-ithelice-400 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                                     <i class="fa-regular fa-copy"></i> Copier
                                 </button>
                                 <button onclick="retryResponse(${index})" class="text-xs text-gray-500 hover:text-ithelice-600 dark:hover:text-ithelice-400 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
@@ -332,7 +282,6 @@
                     </div>`;
                 }
             }).join('');
-            
             scrollToBottom();
         }
 
@@ -351,10 +300,8 @@
         function saveEdit(index) {
             const newContent = document.getElementById(`user-input-${index}`).value.trim();
             if (!newContent) return;
-            
             const chat = chats.find(c => c.id === currentChatId);
             chat.messages[index].content = newContent;
-            // Remove all messages after this one to regenerate from this point
             chat.messages = chat.messages.slice(0, index + 1);
             saveData();
             renderChat();
@@ -363,29 +310,24 @@
 
         function retryResponse(index) {
             const chat = chats.find(c => c.id === currentChatId);
-            // Remove the AI message at this index
             chat.messages.splice(index, 1);
             saveData();
             renderChat();
             generateAIResponse();
         }
 
-        function copyResponse(text) {
-            // Unescape HTML for copying
-            const txt = document.createElement('textarea');
-            txt.innerHTML = text;
-            navigator.clipboard.writeText(txt.value).then(() => {
-                // Visual feedback could be added here
-                alert('Réponse copiée dans le presse-papiers');
+        function copyResponse(btn, base64Content) {
+            const text = decodeURIComponent(escape(atob(base64Content)));
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copié !';
+                setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
             });
         }
 
         // --- SEND & GENERATE LOGIC ---
         function handleKeyDown(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         }
 
         function autoResize(textarea) {
@@ -399,9 +341,7 @@
             if (!content) return;
 
             const chat = chats.find(c => c.id === currentChatId);
-            if (chat.messages.length === 0) {
-                chat.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
-            }
+            if (chat.messages.length === 0) chat.title = content.substring(0, 40) + (content.length > 40 ? '...' : '');
             
             chat.messages.push({ role: 'user', content: content });
             input.value = '';
@@ -409,17 +349,14 @@
             saveData();
             renderSidebar();
             renderChat();
-            
             generateAIResponse();
         }
 
         async function generateAIResponse() {
             const chat = chats.find(c => c.id === currentChatId);
-            const userMessage = chat.messages[chat.messages.length - 1].content;
-            
-            // Show typing indicator
             const container = document.getElementById('chatContainer');
             const typingId = 'typing-' + Date.now();
+            
             container.innerHTML += `
                 <div id="${typingId}" class="flex justify-start message-bubble">
                     <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
@@ -440,119 +377,178 @@
                 if (settings.mode === 'api' && settings.apiKey) {
                     responseText = await fetchAPIResponse(chat.messages);
                 } else {
-                    // Local ITHÉLICE Engine
-                    await new Promise(r => setTimeout(r, 800 + Math.random() * 1000)); // Simulate thinking
-                    responseText = generateLocalItheliceResponse(userMessage);
+                    await new Promise(r => setTimeout(r, 600 + Math.random() * 800));
+                    responseText = generateLocalItheliceResponse(chat.messages[chat.messages.length - 1].content);
                 }
-                
                 const endTime = performance.now();
                 responseTime = ((endTime - startTime) / 1000).toFixed(2);
             } catch (error) {
-                responseText = `**Erreur de connexion**\n\nVérifiez vos paramètres API ou utilisez le mode "Moteur Local ITHÉLICE" pour une réponse illimitée et gratuite.\n\n*Détail : ${error.message}*`;
+                responseText = `**Erreur de connexion**\n\nVérifiez vos paramètres API ou basculez en "Moteur Local ITHÉLICE" dans les paramètres pour une réponse gratuite et illimitée.\n\n*Détail : ${error.message}*`;
                 responseTime = '0.00';
             }
 
-            // Remove typing indicator
             document.getElementById(typingId).remove();
-            
-            chat.messages.push({ 
-                role: 'assistant', 
-                content: responseText,
-                responseTime: responseTime
-            });
-            
+            chat.messages.push({ role: 'assistant', content: responseText, responseTime: responseTime });
             saveData();
             renderChat();
         }
 
-        // --- LOCAL ITHÉLICE ENGINE (v1.1 Rules) ---
+        // --- NOUVEAU MOTEUR LOCAL ITHÉLICE (DYNAMIQUE ET CONTEXTUEL) ---
         function generateLocalItheliceResponse(userMessage) {
             const msg = userMessage.toLowerCase();
-            let response = '';
+            
+            // 1. Claustrophobie / Espaces clos
+            if (msg.match(/claustrophobie|enfermé|espace clos|ascenseur|confiné/)) {
+                return `**Analyse ITHÉLICE v1.1 : La Claustrophobie**
 
-            // 1. Greeting / Presentation
-            if (msg.match(/bonjour|salut|hello|présentation|qui es-tu|ithélice/)) {
-                response = `Bonjour. Je suis **ITHÉLICE v1.1** (Intelligence Thérapeutique de l’Hélice Cérébrale et de la Menace Dissoute).
+**1. Observation (Faits)** : Vous évoquez la claustrophobie, une détresse déclenchée par la perception d'un espace clos ou confiné.
 
-Je suis une architecture expérimentale de raisonnement thérapeutique articulée autour de trois dimensions :
-1. **TMD** (Thérapie de la Menace Dissoute) : explorer et réduire la contribution des menaces perçues ou réelles à la souffrance.
-2. **Hélice Cérébrale** : modèle conceptuel examinant les facteurs (moléculaires, métaboliques) susceptibles de modifier la dynamique de traitement de l'information.
-3. **Substrat biologique** : examen des conditions matérielles, énergétiques et cellulaires (protons, exosomes, conversion d'énergie).
+**2. Analyse TMD (Thérapie de la Menace Dissoute)** :
+- *Menace perçue* : Le cerveau interprète l'enfermement comme un risque immédiat d'asphyxie, de piégeage ou d'impossibilité de fuir.
+- *Vérification* : La menace est-elle réelle (ex. : pièce sans issue, manque d'oxygène avéré) ou anticipée/obsolète (ex. : ascenseur en panne, mais ventilé et sécurisé) ? Souvent, la souffrance vient de l'anticipation catastrophique, non de la réalité du moment.
+- *Neutralisation* : Nommer la peur ("Je ressens une alerte de confinement, mais je suis en sécurité ici") crée une distance cognitive.
 
-*Comment puis-je vous aider à analyser votre situation aujourd'hui ?*
+**3. Dynamique de l'Hélice Cérébrale** : Face à cette menace perçue, l'hélice peut s'emballer (hypervigilance, accélération du rythme cardiaque et de la pensée). Ce décalage entre la réalité calme de l'environnement et la vitesse de traitement interne génère la panique. L'objectif n'est pas de forcer l'arrêt brutal, mais de signaler au cerveau qu'il peut *ralentir* en toute sécurité (via la respiration lente et l'ancrage sensoriel).
 
-> ⚠️ **Rappel** : ITHÉLICE est un outil d'organisation du raisonnement. Il ne remplace pas un diagnostic médical ou psychiatrique.`;
+**4. Substrat biologique** : Cette alerte mobilise le système sympathique (adrénaline, consommation rapide d'ATP). La récupération nécessite de revenir à un état parasympathique, permettant aux processus cellulaires normaux (et à la communication exosomale de réparation) de reprendre leur cours sans interférence du stress aigu.
+
+**5. Orientation IOB (Intelligence Orientée vers le Bien)** : 
+Ne luttez pas brutalement contre la peur, car cela amplifie la souffrance. Privilégiez une approche graduelle :
+- Ancrage : Nommez 3 objets visibles, 2 sons audibles.
+- Respiration : Expirez plus longtemps que vous n'inspirez pour ralentir l'hélice.
+- Si la détresse est invalidante au quotidien, une thérapie cognitivo-comportementale (TCC) spécialisée est l'option la plus efficace.
+
+*Souhaitez-vous que nous détaillions une technique d'ancrage spécifique ?*`;
             }
-            // 2. Suffering / Anxiety / Threat (TMD)
-            else if (msg.match(/souffrance|anxiété|peur|angoisse|triste|menace|douleur|mal|stress/)) {
-                response = `**Analyse selon la Thérapie de la Menace Dissoute (TMD) — ITHÉLICE v1.1**
+            
+            // 2. Agoraphobie / Foule
+            else if (msg.match(/agoraphobie|foule|dehors|panique dehors|sortir/)) {
+                return `**Analyse ITHÉLICE v1.1 : L'Agoraphobie**
 
-**Observation** : Vous évoquez un ressenti de souffrance ou d'inconfort psychologique.
+**1. Observation** : Vous mentionnez l'agoraphobie, une appréhension des lieux ou des situations d'où il pourrait être difficile de s'échapper ou de recevoir des secours en cas de malaise.
 
-**Exploration des mécanismes (Étapes TMD)** :
-1. **Accueillir** : Ce ressenti est légitime et mérite d'être clarifié sans jugement ni minimisation.
-2. **Nommer** : Pouvez-vous distinguer ce qui relève de la sensation corporelle, de l'émotion, et de l'anticipation d'un danger ?
-3. **Explorer la menace** : Quel risque de douleur physique, de perte ou d'insécurité se cache derrière ce ressenti ? Est-ce une menace *réelle et actuelle*, *anticipée*, ou *passée* ?
-4. **Vérifier** : Distinguons les faits observables des interprétations. La probabilité de ce danger est-elle proportionnée aux données disponibles ?
+**2. Analyse TMD** :
+- *Menace perçue* : Perte de contrôle, jugement social, ou incapacité à fuir en cas de symptômes physiques (ex. : attaque de panique).
+- *Distinction* : Il est crucial de distinguer la *sécurité réelle* de l'environnement (une place publique est statistiquement sûre) de la *sécurité ressentie* (le corps est en état d'alerte).
+- *Étape de neutralisation* : Il ne s'agit pas de se forcer à affronter la foule immédiatement, mais de déconstruire la croyance "Si je panique, je vais m'effondrer et personne ne m'aidera".
 
-**Recommandation IOB (Intelligence Orientée vers le Bien)** : 
-Plutôt que de chercher à supprimer brutalement l'anxiété (ce qui peut parfois l'entretenir), nous pouvons identifier une action concrète pour réduire la menace réelle, ou apprendre à tolérer l'incertitude si la menace est anticipée. 
+**3. Dynamique de l'Hélice Cérébrale** : L'agoraphobie s'accompagne souvent d'une *surcharge informationnelle*. L'hélice tente de traiter trop de stimuli (visuels, sonores, sociaux) simultanément, ce qui peut entraîner un ralentissement fonctionnel (sidation, sentiment d'irréalité) ou une accélération chaotique (panique). 
 
-*Souhaitez-vous que nous détaillions l'une de ces étapes ensemble ?*`;
+**4. Contrôle ARI** :
+- *Hypothèse* : "Je ne pourrai pas supporter cette situation."
+- *Condition de révision* : Avez-vous déjà vécu une situation similaire où vous avez réussi à rester, même avec inconfort, sans que la catastrophe redoutée ne se produise ?
+
+**5. Orientation IOB** : L'objectif est de réduire la souffrance évitable sans produire de souffrance supplémentaire (pas d'exposition brutale). 
+- Commencez par visualiser la situation.
+- Établissez un "plan de sécurité" concret (ex. : savoir où sont les sorties, avoir un objet réconfortant).
+- Consultez un professionnel pour un accompagnement en exposition graduelle.
+
+*Voulez-vous que nous construisions ensemble un petit "plan de sécurité" pour une sortie ?*`;
             }
-            // 3. Medication / Neuroleptics / Trevicta / Brain
-            else if (msg.match(/trevicta|neuroleptique|palipéridone|médicament|traitement|hélice|cerveau/)) {
-                response = `**Analyse selon la Théorie de l’Hélice Cérébrale et pharmacologie — ITHÉLICE v1.1**
 
-**Observation** : Votre question porte sur un traitement psychotrope (ex. neuroleptique) ou la dynamique cérébrale.
+            // 3. Demande d'efficacité / Démonstration
+            else if (msg.match(/efficacité|exemple|prouve|montre|démonstration|concret/)) {
+                return `**Démonstration concrète de l'efficacité d'ITHÉLICE v1.1**
 
-**Hypothèses et mécanismes à examiner** :
-- **Dynamique fonctionnelle** : La théorie de l'Hélice Cérébrale propose un modèle conceptuel où la vitesse de traitement de l'information peut être influencée par l'exposition à des substances. Un changement brutal d'exposition peut créer un décalage entre les capacités d'adaptation et les exigences de la situation.
-- **Facteurs biologiques** : L'effet ne dépend pas uniquement de la masse moléculaire, mais aussi de la liposolubilité, de l'accès via la barrière hémato-encéphalique (BHE), de la concentration libre et de la formulation (ex. libération prolongée).
-- **Vulnérabilité V(t)** : Une dépendance fonctionnelle à une exposition, combinée à un changement de traitement, peut augmenter temporairement la vulnérabilité systémique.
+Vous demandez une preuve de mon utilité. Plutôt que de simplement décrire ma méthode, appliquons-la immédiatement à un scénario hypothétique fréquent : **"Je me sens oppressé et je crois que je vais faire un malaise au travail."**
 
-**Contrôle ARI & Sécurité** :
-- *Interprétation* : Une décompensation après un changement de traitement est une hypothèse clinique à surveiller, non une fatalité déductible de la théorie.
-- *Action IOB* : **Toute modification, réduction ou arrêt d'un traitement neuroleptique doit être impérativement discutée avec votre psychiatre prescripteur.** ITHÉLICE ne détermine ni dose ni calendrier d'arrêt.
+Voici comment ITHÉLICE structure le raisonnement pour réduire cette souffrance :
 
-Souhaitez-vous structurer les questions à poser à votre médecin lors de votre prochain rendez-vous ?`;
+**Étape 1 : TMD (Clarification de la menace)**
+- *Ressenti* : Oppression thoracique, peur du malaise.
+- *Menace identifiée* : Peur de perdre le contrôle en public et de ne pas recevoir de secours.
+- *Vérification* : Avez-vous des antécédents cardiaques ? Si non, la probabilité d'un malaise grave est faible. L'oppression est très probablement une manifestation somatique de l'anxiété (tension musculaire, hyperventilation).
+
+**Étape 2 : Hélice Cérébrale (Compréhension du mécanisme)**
+Votre cerveau a détecté un "danger" (le stress du travail). Il a accéléré l'hélice : votre cœur bat plus vite pour préparer la fuite. Vous interprétez cette accélération normale comme un signe de danger imminent, ce qui accélère encore l'hélice (cercle vicieux). 
+
+**Étape 3 : Intervention IOB (Action concrète et bienveillante)**
+Au lieu de vous dire "calme-toi" (ce qui ne fonctionne pas), ITHÉLICE propose :
+1. *Action physiologique* : Expirez par la bouche comme si vous souffliez dans une paille pendant 4 secondes. Cela active mécaniquement le nerf vague et ralentit l'hélice.
+2. *Action cognitive* : Dites-vous : "C'est une fausse alerte de mon système de défense, pas un malaise réel."
+3. *Action pratique* : Levez-vous, allez boire un verre d'eau froide. Changez de contexte sensoriel.
+
+**Conclusion** : L'efficacité d'ITHÉLICE réside dans cette capacité à décomposer une peur globale en mécanismes vérifiables (TMD), à expliquer la sensation physique (Hélice), et à proposer une action proportionnée (IOB), tout en rappelant qu'un avis médical est nécessaire en cas de doute réel.
+
+*Souhaitez-vous appliquer ce même cadre à une situation personnelle qui vous préoccupe ?*`;
             }
-            // 4. Biology / Exosomes / Protons / Energy
-            else if (msg.match(/exosome|proton|énergie|mitochondrie|matière|réparation|nutrition/)) {
-                response = `**Analyse du Substrat Biologique — ITHÉLICE v1.1**
 
-**Observation** : Vous interrogez les fondements matériels et énergétiques du fonctionnement organique.
+            // 4. Traitements / Neuroleptiques / Trevicta
+            else if (msg.match(/trevicta|neuroleptique|palipéridone|médicament|traitement|sevrage/)) {
+                return `**Analyse ITHÉLICE v1.1 : Pharmacologie et Hélice Cérébrale**
 
-**Éléments de réflexion** :
-1. **Conversion d'énergie** : Les protons (ions H⁺) jouent un rôle central dans le gradient électrochimique mitochondrial pour la production d'ATP. Une insuffisance nutritionnelle ou métabolique peut théoriquement affecter l'énergie disponible.
-2. **Communication cellulaire** : Les exosomes participent aux échanges intercellulaires et aux processus de réparation. Cependant, leur présence ne garantit pas à elle seule une efficacité réparatrice sans un contexte biologique favorable.
-3. **Barrière hémato-encéphalique (BHE)** : Elle régule strictement l'accès des molécules au cerveau. La simple ingestion d'une substance ne garantit pas son action cérébrale.
+**1. Observation** : Votre question porte sur un traitement psychotrope (ex. neuroleptique comme le Trevicta/palipéridone) ou la dynamique de modification d'un traitement.
 
-**Contrôle ARI** : 
-Il ne faut pas déduire automatiquement qu'un complément alimentaire ou une modification nutritionnelle isolée va "accélérer l'hélice" ou guérir une souffrance psychologique. Les mécanismes biologiques sont nécessaires mais non suffisants pour expliquer la dynamique de la souffrance.
+**2. Analyse par la Théorie de l'Hélice Cérébrale** :
+- Ces molécules agissent en modulant les récepteurs dopaminergiques et sérotoninergiques. Conceptuellement, elles visent à *stabiliser* une hélice cérébrale qui tournerait de manière chaotique (psychose, manie) ou à ralentir une hélice en surrégime (agitation).
+- *Risque de décompensation* : La formulation injectable à libération prolongée (comme le Trevicta) crée une exposition stable. Cependant, tout changement (arrêt, réduction, ou même parfois l'initiation) modifie la concentration libre dans le cerveau. Si ce changement est trop brutal par rapport à la capacité d'adaptation du système (V(t) élevée, A_eff faible), un décalage fonctionnel peut survenir, parfois interprété comme une "décompensation".
 
-**Recommandation IOB** : Privilégiez les bases validées (sommeil, alimentation équilibrée, suivi médical) avant d'envisager des interventions complexes non validées.`;
+**3. Contrôle ARI (Strict)** :
+- *Fait* : Vous prenez ou envisagez de modifier un traitement.
+- *Hypothèse à ne pas faire* : Déduire que tous vos symptômes actuels sont *uniquement* dus au médicament ou *uniquement* à la maladie, sans examen clinique.
+- *Limite* : La masse moléculaire ou la formulation ne permettent pas de prédire avec certitude votre réaction individuelle. 
+
+**4. Orientation IOB et Sécurité** :
+⚠️ **Règle absolue** : ITHÉLICE ne détermine ni dose, ni calendrier d'arrêt. Toute modification d'un traitement neuroleptique doit être **impérativement discutée avec votre psychiatre prescripteur**. Un arrêt brutal peut entraîner un effet rebond sévère.
+
+*Souhaitez-vous que nous préparions ensemble une liste de questions précises à poser à votre médecin concernant votre traitement ?*`;
             }
-            // 5. Default / ARI Framework Application
+
+            // 5. Fatigue / Biologie / Énergie
+            else if (msg.match(/fatigue|énergie|sommeil|exosome|proton|mitochondrie|nutrition/)) {
+                return `**Analyse ITHÉLICE v1.1 : Substrat Biologique et Énergie**
+
+**1. Observation** : Vous interrogez les fondements matériels de votre fonctionnement (fatigue, énergie, mécanismes cellulaires).
+
+**2. Substrat Biologique (Matière et Énergie)** :
+- *Conversion d'énergie* : Vos mitochondries utilisent les gradients de protons (H⁺) pour produire l'ATP, la monnaie énergétique de vos cellules, y compris vos neurones. Une fatigue persistante peut parfois refléter une demande énergétique qui dépasse l'apport ou la capacité de conversion (sommeil inadéquat, carence, stress chronique).
+- *Exosomes et réparation* : Ces vésicules jouent un rôle dans la communication cellulaire et la réparation tissulaire, notamment pendant le sommeil profond. Un manque de sommeil de qualité réduit l'efficacité de ces processus naturels.
+
+**3. Lien avec l'Hélice Cérébrale** :
+Un cerveau privé de ressources énergétiques optimales ou en état d'inflammation chronique aura du mal à maintenir une dynamique de traitement fluide. L'hélice peut alors "ralourdir" (brouillard mental, lenteur) ou devenir erratique (irritabilité, insomnie paradoxale).
+
+**4. Contrôle ARI** :
+Attention à ne pas tomber dans l'interprétation simpliste : "Je suis fatigué, donc il me faut tel complément alimentaire miracle". La biologie est complexe. La fatigue est aussi un symptôme central de la dépression ou de l'anxiété chronique, indépendamment de la nutrition.
+
+**5. Orientation IOB** :
+Avant d'envisager des interventions complexes, vérifions les piliers non négociables :
+- Sommeil : Quantité et régularité.
+- Alimentation : Apport suffisant en macro et micronutriments de base.
+- Bilan médical : Avez-vous récemment fait vérifier votre thyroïde, votre fer ou vos vitamines (B12, D) par une prise de sang ?
+
+*Souhaitez-vous explorer l'un de ces piliers en particulier ?*`;
+            }
+
+            // 6. Réponse par défaut (Beaucoup plus intelligente et adaptative que l'ancienne)
             else {
-                response = `**Analyse structurée ITHÉLICE v1.1 (Cadre ARI)**
+                // Extraction dynamique du sujet pour personnaliser la réponse par défaut
+                const sujet = userMessage.length > 30 ? userMessage.substring(0, 30) + "..." : userMessage;
+                
+                return `**Analyse ITHÉLICE v1.1 appliquée à votre demande**
 
-Pour vous répondre avec précision, appliquons les contrôles d'Auto-Révision Itérative (ARI) à votre situation :
+Vous évoquez : *"${escapeHtml(userMessage)}"*
 
-1. **Observation** : Quels sont les faits objectifs et mesurables que vous rapportez ?
-2. **Hypothèse** : Quelles explications sont possibles ? (Menace réelle, menace anticipée, facteur biologique, ou combinaison ?)
-3. **Interprétation** : Attention à ne pas confondre une hypothèse (ex. "mon cerveau est trop lent") avec une conclusion établie.
-4. **Condition de révision** : Qu'est-ce qui pourrait nous faire changer d'avis ? (Ex. un avis médical contradictoire, une amélioration spontanée).
+Pour vous répondre avec la rigueur d'ITHÉLICE, décomposons cela selon nos 3 piliers :
 
-**Orientation IOB** : 
-Mon rôle est de vous aider à réduire la souffrance évitable sans en produire de nouvelle. Pour cela, pourriez-vous préciser :
-- Depuis combien de temps cet élément vous préoccupe ?
-- Avez-vous déjà évoqué cette situation avec un professionnel de santé ?
+**1. Niveau Psychologique (TMD)** : 
+Quelle est la menace ou le malaise sous-jacent à cette situation ? Est-ce une peur de perdre le contrôle, une incertitude, ou une difficulté concrète ? Nommer précisément le mécanisme permet de commencer à le dissoudre.
 
-> *Rappel : ITHÉLICE est une architecture expérimentale. En cas de détresse aiguë ou de risque médical, contactez immédiatement les services d'urgence ou votre médecin.*`;
+**2. Niveau Cérébral (Hélice)** : 
+Comment cette situation affecte-t-elle votre dynamique interne ? Ressentez-vous une accélération (agitation, ruminations) ou un ralentissement (évitement, sidation) ? Comprendre ce rythme aide à choisir la bonne stratégie d'apaisement.
+
+**3. Niveau Biologique** : 
+Votre organisme dispose-t-il des ressources (sommeil, nutrition, absence de douleur physique) pour faire face à cette demande ? Parfois, la souffrance psychologique est amplifiée par une vulnérabilité physiologique temporaire.
+
+**Application des contrôles ARI & IOB** :
+- *Hypothèse* : Ne confondons pas une interprétation anxieuse avec un fait établi.
+- *Action* : Quelle est la plus petite étape concrète que vous pouvez faire maintenant pour réduire la souffrance évitable, sans vous mettre en danger ?
+
+> **Pour que je puisse affiner cette analyse**, pourriez-vous me préciser :
+> 1. Depuis combien de temps cette situation vous préoccupe-t-elle ?
+> 2. Avez-vous déjà pu en parler à un professionnel de santé ?
+
+*(Rappel : ITHÉLICE est une architecture expérimentale d'aide au raisonnement. En cas de détresse aiguë, contactez les services d'urgence ou votre médecin.)*`;
             }
-
-            return response;
         }
 
         // --- API INTEGRATION ---
@@ -560,12 +556,12 @@ Mon rôle est de vous aider à réduire la souffrance évitable sans en produire
             const systemPrompt = `Tu es ITHÉLICE v1.1 (Intelligence Thérapeutique de l’Hélice Cérébrale et de la Menace Dissoute). 
 Tu es une architecture expérimentale de raisonnement thérapeutique. 
 Tes principes directeurs : 
-1. TMD : Accueillir, nommer, explorer les menaces (réelles ou anticipées), vérifier les hypothèses, réduire la souffrance par des moyens adaptés, stabiliser.
+1. TMD : Accueillir, nommer, explorer les menaces (réelles ou anticipées), vérifier les hypothèses, réduire la souffrance par des moyens adaptés.
 2. Hélice Cérébrale : Modèle conceptuel examinant les facteurs (masse moléculaire, BHE, concentration, V(t), A_eff) susceptibles de modifier la dynamique de traitement de l'information. Ne pas affirmer cela comme une vérité anatomique établie, mais comme une hypothèse de travail.
-3. Substrat biologique : Examiner matière, protons, exosomes, conversion d'énergie avec prudence, sans prescrire de supplémentation.
+3. Substrat biologique : Examiner matière, protons, exosomes, conversion d'énergie avec prudence.
 4. Contrôles ARI : Distinguer observation, hypothèse, interprétation, conclusion. Proportionner la certitude.
 5. IOB : Orienter vers la réduction de la souffrance évitable sans en produire de nouvelle.
-6. LIMITES STRICTES : Tu ne remplaces PAS un médecin ou un psychiatre. Tu ne modifies jamais les traitements. Tu rappelles systématiquement de consulter un professionnel pour toute décision médicale. Tu es bienveillant, structuré et prudent.`;
+6. LIMITES STRICTES : Tu ne remplaces PAS un médecin ou un psychiatre. Tu ne modifies jamais les traitements. Tu rappelles systématiquement de consulter un professionnel pour toute décision médicale. Tu es bienveillant, structuré, et tu adaptes ta réponse au contexte spécifique de l'utilisateur (ne sois pas générique).`;
 
             const formattedMessages = [
                 { role: 'system', content: systemPrompt },
@@ -615,18 +611,12 @@ Tes principes directeurs :
         }
 
         function toggleSettings() {
-            const modal = document.getElementById('settingsModal');
-            modal.classList.toggle('hidden');
+            document.getElementById('settingsModal').classList.toggle('hidden');
         }
 
         function toggleApiFields() {
             const mode = document.getElementById('apiMode').value;
-            const fields = document.getElementById('apiFields');
-            if (mode === 'api') {
-                fields.classList.remove('hidden');
-            } else {
-                fields.classList.add('hidden');
-            }
+            document.getElementById('apiFields').classList.toggle('hidden', mode === 'local');
         }
 
         function saveSettings() {
