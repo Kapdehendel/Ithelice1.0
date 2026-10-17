@@ -27,13 +27,7 @@
     <script>
         tailwind.config = {
             darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        ithelice: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' }
-                    }
-                }
-            }
+            theme: { extend: { colors: { ithelice: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 700: '#0369a1', 900: '#0c4a6e' } } } }
         }
     </script>
 </head>
@@ -56,7 +50,7 @@
         <div class="flex-1 overflow-y-auto custom-scrollbar px-3 pb-3" id="chatHistoryList"></div>
         <div class="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
             <button onclick="toggleSettings()" class="w-full flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
-                <i class="fa-solid fa-gear"></i> Paramètres & API
+                <i class="fa-solid fa-gear"></i> Paramètres
             </button>
             <button onclick="toggleDarkMode()" class="w-full flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded-lg transition-colors">
                 <i class="fa-solid fa-moon dark:hidden"></i><i class="fa-solid fa-sun hidden dark:block"></i>
@@ -79,7 +73,7 @@
             </div>
             <div class="flex items-center gap-2">
                 <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-medium">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> <span id="modeIndicator">IA Connectée</span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> <span id="modeIndicator">IA Connectée (Pollinations)</span>
                 </span>
             </div>
         </header>
@@ -91,7 +85,7 @@
                 </div>
                 <div class="max-w-md">
                     <h3 class="font-semibold text-gray-700 dark:text-gray-200 mb-1">Bienvenue dans ITHÉLICE v1.1</h3>
-                    <p class="text-sm">Posez n'importe quelle question sur les phobies, l'anxiété, les traitements, ou tout autre sujet. L'IA répondra en appliquant les principes TMD, ARI et IOB.</p>
+                    <p class="text-sm">Connectée à une vraie IA (gratuite, illimitée, sans clé). Posez n'importe quelle question : phobies, anxiété, traitements, biologie... L'IA appliquera les principes TMD, ARI et IOB à votre situation.</p>
                     <p class="text-xs mt-3 text-red-500 dark:text-red-400 font-medium"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Ne remplace pas un avis médical ou psychiatrique.</p>
                 </div>
             </div>
@@ -107,7 +101,7 @@
                 </button>
             </div>
             <p class="text-center text-xs text-gray-400 dark:text-gray-500 mt-2">
-                ITHÉLICE utilise une IA pour répondre de manière contextuelle et intelligente.
+                ITHÉLICE est un modèle expérimental. Les informations sont fournies à titre éducatif.
             </p>
         </div>
     </main>
@@ -115,27 +109,25 @@
     <!-- Settings Modal -->
     <div id="settingsModal" class="fixed inset-0 z-50 hidden">
         <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="toggleSettings()"></div>
-        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-200 dark:border-gray-700">
-            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-gear text-ithelice-600"></i> Paramètres de connexion</h3>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md p-6 border border-gray-200 dark:border-gray-700 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2"><i class="fa-solid fa-gear text-ithelice-600"></i> Paramètres</h3>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mode de fonctionnement</label>
-                    <select id="apiMode" onchange="toggleApiFields()" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5 focus:ring-ithelice-500 focus:border-ithelice-500">
-                        <option value="huggingface">Hugging Face (Gratuit, illimité, recommandé)</option>
-                        <option value="openrouter">OpenRouter (Nécessite une clé API)</option>
-                        <option value="local">Moteur Local (Hors-ligne, réponses limitées)</option>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Modèle IA</label>
+                    <select id="aiModel" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5 focus:ring-ithelice-500 focus:border-ithelice-500">
+                        <option value="openai">OpenAI GPT (recommandé)</option>
+                        <option value="mistral">Mistral</option>
+                        <option value="llama">Llama</option>
+                        <option value="qwen-coder">Qwen Coder</option>
                     </select>
+                    <p class="text-xs text-gray-500 mt-1">Via Pollinations.ai — gratuit, illimité, sans clé API, fonctionne directement depuis GitHub Pages.</p>
                 </div>
-                <div id="apiFields" class="hidden space-y-3">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">URL de l'API</label>
-                        <input type="text" id="apiUrl" value="https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3" class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Clé API (optionnelle pour Hugging Face)</label>
-                        <input type="password" id="apiKey" placeholder="hf_..." class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm p-2.5">
-                        <p class="text-xs text-gray-500 mt-1">Pour Hugging Face, créez un compte gratuit sur <a href="https://huggingface.co/settings/tokens" target="_blank" class="text-ithelice-600 hover:underline">huggingface.co/settings/tokens</a></p>
-                    </div>
+                <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                    <p class="text-xs text-blue-800 dark:text-blue-300">
+                        <i class="fa-solid fa-circle-info mr-1"></i>
+                        <strong>Pourquoi Pollinations.ai ?</strong><br>
+                        Les autres APIs (Hugging Face, OpenRouter) bloquent les requêtes directes depuis un navigateur (CORS). Pollinations.ai est la seule API gratuite qui fonctionne depuis GitHub Pages sans serveur intermédiaire.
+                    </p>
                 </div>
             </div>
             <div class="mt-6 flex justify-end gap-3">
@@ -150,7 +142,7 @@
         let chats = JSON.parse(localStorage.getItem('ithelice_chats')) || [];
         let currentChatId = localStorage.getItem('ithelice_current_chat') || null;
         let isSidebarOpen = false;
-        let settings = JSON.parse(localStorage.getItem('ithelice_settings')) || { mode: 'huggingface', apiUrl: 'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3', apiKey: '' };
+        let settings = JSON.parse(localStorage.getItem('ithelice_settings')) || { model: 'openai' };
 
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -161,18 +153,11 @@
             renderChat();
             applyDarkMode();
             updateModeIndicator();
-            
-            document.getElementById('apiMode').value = settings.mode;
-            document.getElementById('apiUrl').value = settings.apiUrl;
-            document.getElementById('apiKey').value = settings.apiKey;
-            toggleApiFields();
+            document.getElementById('aiModel').value = settings.model;
         });
 
         function updateModeIndicator() {
-            const indicator = document.getElementById('modeIndicator');
-            if (settings.mode === 'huggingface') indicator.textContent = 'Hugging Face (Gratuit)';
-            else if (settings.mode === 'openrouter') indicator.textContent = 'OpenRouter';
-            else indicator.textContent = 'Mode Local';
+            document.getElementById('modeIndicator').textContent = 'IA Connectée (Pollinations)';
         }
 
         // --- SIDEBAR & NAVIGATION ---
@@ -379,16 +364,11 @@
             let responseTime = 0;
 
             try {
-                if (settings.mode === 'local') {
-                    await new Promise(r => setTimeout(r, 600 + Math.random() * 800));
-                    responseText = generateLocalItheliceResponse(chat.messages[chat.messages.length - 1].content);
-                } else {
-                    responseText = await fetchAPIResponse(chat.messages);
-                }
+                responseText = await fetchPollinationsResponse(chat.messages);
                 const endTime = performance.now();
                 responseTime = ((endTime - startTime) / 1000).toFixed(2);
             } catch (error) {
-                responseText = `**Erreur de connexion à l'IA**\n\n${error.message}\n\n*Essayez de passer en mode "Moteur Local" dans les paramètres, ou vérifiez votre clé API.*`;
+                responseText = `**Erreur de connexion à l'IA**\n\n${error.message}\n\n*Vérifiez votre connexion internet. Si le problème persiste, Pollinations.ai est peut-être temporairement indisponible.*`;
                 responseTime = '0.00';
             }
 
@@ -398,25 +378,8 @@
             renderChat();
         }
 
-        // --- LOCAL ITHÉLICE ENGINE (Fallback basique) ---
-        function generateLocalItheliceResponse(userMessage) {
-            return `**Mode Local Activé**
-
-Le mode local utilise des réponses pré-programmées limitées. Pour des réponses vraiment intelligentes et contextuelles comme vous le souhaitez, je recommande fortement d'utiliser le mode **Hugging Face** (gratuit et illimité).
-
-**Votre question** : "${escapeHtml(userMessage)}"
-
-Pour obtenir une réponse détaillée appliquant les principes TMD, Hélice Cérébrale, ARI et IOB à votre situation spécifique :
-1. Allez dans **Paramètres & API**
-2. Sélectionnez **Hugging Face**
-3. Créez un compte gratuit sur huggingface.co et générez un token (optionnel mais recommandé)
-4. Revenez ici et posez à nouveau votre question
-
-Vous obtiendrez alors des réponses personnalisées et intelligentes pour n'importe quel sujet (arachnophobie, agoraphobie, traitements, etc.).`;
-        }
-
-        // --- VRAIE IA VIA API ---
-        async function fetchAPIResponse(messages) {
+        // --- POLLINATIONS.AI API (fonctionne depuis GitHub Pages, sans clé) ---
+        async function fetchPollinationsResponse(messages) {
             const systemPrompt = `Tu es ITHÉLICE v1.1 (Intelligence Thérapeutique de l'Hélice Cérébrale et de la Menace Dissoute).
 
 Tu es une architecture expérimentale de raisonnement thérapeutique orientée vers la réduction de la souffrance évitable.
@@ -445,13 +408,11 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
    - Distinguer clairement : Observation (faits) / Hypothèse (explication possible) / Interprétation (cadre théorique) / Conclusion (soutenue par les éléments)
    - Proportionner le degré de certitude aux éléments disponibles
    - Expliciter les conditions qui pourraient faire réviser chaque hypothèse
-   - Ne pas confondre plausibilité théorique et efficacité démontrée
 
 5. **IOB (Intelligence Orientée vers le Bien)** :
    - Orienter vers la réduction de la souffrance évitable
    - Ne pas produire de souffrance supplémentaire
    - Proposer des actions concrètes, proportionnées et bienveillantes
-   - Développer l'autonomie de la personne
 
 6. **LIMITES ABSOLUES** :
    - Tu ne remplaces PAS un médecin, psychiatre ou thérapeute
@@ -460,80 +421,35 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
    - En cas de détresse aiguë ou de risque, tu orientes vers les services d'urgence
 
 **Style de réponse attendu :**
-- Réponds de manière contextuelle et spécifique à la question posée
-- Applique les principes ITHÉLICE de façon adaptée au sujet
+- Réponds de manière CONTEXTUELLE et SPÉCIFIQUE à la question posée (pas de réponse générique)
+- Applique les principes ITHÉLICE de façon adaptée au sujet précis
 - Sois structuré mais naturel
-- Pose des questions pour affiner l'analyse si nécessaire
-- Utilise le formatage markdown (titres, listes, gras) pour la clarté`;
+- Utilise le formatage markdown (titres, listes, gras) pour la clarté
+- Si on te demande un exemple d'efficacité, donne un exemple concret et détaillé
+- Si on te parle d'une phobie (arachnophobie, claustrophobie, agoraphobie, etc.), analyse SPÉCIFIQUEMENT cette phobie avec TMD, Hélice et IOB`;
 
-            let headers = { 'Content-Type': 'application/json' };
-            let body;
+            const formattedMessages = [
+                { role: 'system', content: systemPrompt },
+                ...messages.map(m => ({ role: m.role, content: m.content }))
+            ];
 
-            if (settings.mode === 'huggingface') {
-                // Hugging Face Inference API
-                if (settings.apiKey) {
-                    headers['Authorization'] = `Bearer ${settings.apiKey}`;
-                }
-                
-                const prompt = systemPrompt + '\n\n' + messages.map(m => 
-                    `${m.role === 'user' ? 'Utilisateur' : 'ITHÉLICE'}: ${m.content}`
-                ).join('\n\n') + '\n\nITHÉLICE:';
-                
-                body = JSON.stringify({
-                    inputs: prompt,
-                    parameters: {
-                        max_new_tokens: 800,
-                        temperature: 0.7,
-                        return_full_text: false
-                    }
-                });
-                
-                const response = await fetch(settings.apiUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    body: body
-                });
-
-                if (!response.ok) {
-                    const err = await response.text();
-                    throw new Error(`Erreur API Hugging Face ${response.status}: ${err}`);
-                }
-
-                const data = await response.json();
-                return data[0].generated_text.trim();
-                
-            } else if (settings.mode === 'openrouter') {
-                // OpenRouter API
-                headers['Authorization'] = `Bearer ${settings.apiKey}`;
-                headers['HTTP-Referer'] = window.location.href;
-                headers['X-Title'] = 'ITHELICE Interface';
-                
-                const formattedMessages = [
-                    { role: 'system', content: systemPrompt },
-                    ...messages.map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content }))
-                ];
-
-                body = JSON.stringify({
-                    model: 'meta-llama/llama-3-8b-instruct',
+            const response = await fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
                     messages: formattedMessages,
-                    temperature: 0.7,
-                    max_tokens: 800
-                });
-                
-                const response = await fetch(settings.apiUrl, {
-                    method: 'POST',
-                    headers: headers,
-                    body: body
-                });
+                    model: settings.model,
+                    seed: Math.floor(Math.random() * 1000000)
+                })
+            });
 
-                if (!response.ok) {
-                    const err = await response.text();
-                    throw new Error(`Erreur API OpenRouter ${response.status}: ${err}`);
-                }
-
-                const data = await response.json();
-                return data.choices[0].message.content;
+            if (!response.ok) {
+                const err = await response.text();
+                throw new Error(`Erreur API ${response.status}: ${err.substring(0, 200)}`);
             }
+
+            const text = await response.text();
+            return text.trim();
         }
 
         // --- UTILITIES ---
@@ -557,27 +473,8 @@ Tu es une architecture expérimentale de raisonnement thérapeutique orientée v
             document.getElementById('settingsModal').classList.toggle('hidden');
         }
 
-        function toggleApiFields() {
-            const mode = document.getElementById('apiMode').value;
-            const fields = document.getElementById('apiFields');
-            
-            if (mode === 'local') {
-                fields.classList.add('hidden');
-            } else if (mode === 'huggingface') {
-                fields.classList.remove('hidden');
-                document.getElementById('apiUrl').value = 'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3';
-                document.getElementById('apiKey').placeholder = 'hf_... (optionnelle mais recommandée)';
-            } else if (mode === 'openrouter') {
-                fields.classList.remove('hidden');
-                document.getElementById('apiUrl').value = 'https://openrouter.ai/api/v1/chat/completions';
-                document.getElementById('apiKey').placeholder = 'sk-or-... (requise)';
-            }
-        }
-
         function saveSettings() {
-            settings.mode = document.getElementById('apiMode').value;
-            settings.apiUrl = document.getElementById('apiUrl').value;
-            settings.apiKey = document.getElementById('apiKey').value;
+            settings.model = document.getElementById('aiModel').value;
             localStorage.setItem('ithelice_settings', JSON.stringify(settings));
             toggleSettings();
             updateModeIndicator();
